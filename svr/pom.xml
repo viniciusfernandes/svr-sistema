@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>br.com.svr</groupId>
+		<artifactId>svr-sistema</artifactId>
+		<version>1.0-SNAPSHOT</version>
+	</parent>
+
+	<artifactId>svr</artifactId>
+	<packaging>ear</packaging>
+
+	<name>svr</name>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		<maven.compiler.source>1.8</maven.compiler.source>
+		<maven.compiler.target>1.8</maven.compiler.target>
+	</properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>br.com.svr</groupId>
+			<artifactId>svr-services-impl</artifactId>
+			<type>ejb</type>
+			<version>1.0-SNAPSHOT</version>
+		</dependency>
+
+		<dependency>
+			<groupId>br.com.svr</groupId>
+			<artifactId>svr-ui</artifactId>
+			<type>war</type>
+			<version>1.0-SNAPSHOT</version>
+		</dependency>
+
+		<dependency>
+			<groupId>br.com.svr</groupId>
+			<artifactId>svr-services</artifactId>
+			<version>1.0-SNAPSHOT</version>
+		</dependency>
+
+		<dependency>
+			<groupId>br.com.svr</groupId>
+			<artifactId>svr-utils</artifactId>
+			<version>1.0-SNAPSHOT</version>
+		</dependency>
+
+	</dependencies>
+
+	<build>
+		<finalName>svr</finalName>
+		<plugins>
+			<plugin>
+				<artifactId>maven-ear-plugin</artifactId>
+				<configuration>
+					<!-- INSERINDO OS AS DEPENDENCIAS .JAR NO DORETORIO LIB -->
+					<defaultLibBundleDir>lib</defaultLibBundleDir>
+					<archive>
+						<manifest>
+							<addClasspath>true</addClasspath>
+						</manifest>
+					</archive>
+					<modules>
+						<webModule>
+							<groupId>br.com.svr</groupId>
+							<artifactId>svr-ui</artifactId>
+							<contextRoot>/vendas</contextRoot>
+						</webModule>
+					</modules>
+				</configuration>
+			</plugin>
+
+
+		</plugins>
+	</build>
+</project>
