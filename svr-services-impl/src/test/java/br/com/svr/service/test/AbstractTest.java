@@ -42,7 +42,10 @@ public abstract class AbstractTest {
 			return;
 		}
 		try {
+			System.out.println("++++++++++++++++++++ Vai criar o entity manager ++++++++++++++++++++");
+
 			emf = Persistence.createEntityManagerFactory("svr");
+			System.out.println("++++++++++++++++++++ Criou o entity manager ++++++++++++++++++++");
 		} catch (Throwable e) {
 			e.printStackTrace();
 			throw new IllegalStateException("Falha a criacao do entity manager.", e);
