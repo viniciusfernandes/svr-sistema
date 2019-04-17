@@ -10,26 +10,34 @@ import javax.ejb.EJB;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import br.com.svr.service.EmailService;
+import br.com.svr.service.exception.NotificacaoException;
+import br.com.svr.service.mensagem.email.MensagemEmail;
+
 public class ServiceBuilder {
 	private static EntityManager em = null;
 
 	/*
-	 * ESSE ATRIBUTO FOI CRIADO PARA CONTORNAR O PROBLEMA DE REFERENCIAS
-	 * CICLICAS ENTRE OS SERVICOS, POR EXEMPLO, PEDIDOSERVICE E ESTOQUE SERVICE.
-	 * QUANDO VAMOS EFETUAR O BUILD DO PEDIDOSERVICE, TEMOS QUE EFETUAR O BUILD
-	 * DO ESTOQUESERVICE, ENTAO, PARA CONTORNAR UM DEADLOCK ENTRE OS BUILDS,
-	 * JOGAMOS O OBJETO PEDIDOSERVICEIMPL EM MEMORIA, E ASSIM QUE O
-	 * ESTOQUESERVICE FOR EFFETUAR O BUILD DO PEDIDOSSERVICE, VERIFICAMOS QUE
-	 * ELE JA ESTA EM MEMORIA E RETORNAMOS ESSE OBJETO. SENDO QUE MANTEMOS
-	 * TEMPORARIAMENTE ESSES OBJETOS EM MEMORIA POIS O MECANISMO DO MOCKIT DEVE
-	 * SER EXECUTADO PARA CADA TESTE UNITARIO, POIS ESSE EH O CICLO DE VIDA DAS
-	 * IMPLEMENTACOES MOCKADAS DOS METODOS. ELAS VALEM APENAS EM CADA TESTE
-	 * UNITARIO.
+	 * ESSE ATRIBUTO FOI CRIADO PARA CONTORNAR O PROBLEMA DE REFERENCIAS CICLICAS
+	 * ENTRE OS SERVICOS, POR EXEMPLO, PEDIDOSERVICE E ESTOQUE SERVICE. QUANDO VAMOS
+	 * EFETUAR O BUILD DO PEDIDOSERVICE, TEMOS QUE EFETUAR O BUILD DO
+	 * ESTOQUESERVICE, ENTAO, PARA CONTORNAR UM DEADLOCK ENTRE OS BUILDS, JOGAMOS O
+	 * OBJETO PEDIDOSERVICEIMPL EM MEMORIA, E ASSIM QUE O ESTOQUESERVICE FOR
+	 * EFFETUAR O BUILD DO PEDIDOSSERVICE, VERIFICAMOS QUE ELE JA ESTA EM MEMORIA E
+	 * RETORNAMOS ESSE OBJETO. SENDO QUE MANTEMOS TEMPORARIAMENTE ESSES OBJETOS EM
+	 * MEMORIA POIS O MECANISMO DO MOCKIT DEVE SER EXECUTADO PARA CADA TESTE
+	 * UNITARIO, POIS ESSE EH O CICLO DE VIDA DAS IMPLEMENTACOES MOCKADAS DOS
+	 * METODOS. ELAS VALEM APENAS EM CADA TESTE UNITARIO.
 	 */
 	private final static Map<Class<?>, Object> mapTemporarioServices = new HashMap<Class<?>, Object>();
 
 	private static void buildEmailService() {
-
+		mapTemporarioServices.put(EmailService.class, new EmailService() {
+			@Override
+			public void enviar(MensagemEmail mensagemEmail) throws NotificacaoException {
+				//System.out.println(mensagemEmail);
+			}
+		});
 	}
 
 	@SuppressWarnings("unchecked")
@@ -52,24 +60,22 @@ public class ServiceBuilder {
 
 		try {
 			/*
-			 * ESSE ATRIBUTO FOI CRIADO PARA CONTORNAR O PROBLEMA DE REFERENCIAS
-			 * CICLICAS ENTRE OS SERVICOS, POR EXEMPLO, PEDIDOSERVICE E ESTOQUE
-			 * SERVICE. QUANDO VAMOS EFETUAR O BUILD DO PEDIDOSERVICE, TEMOS QUE
-			 * EFETUAR O BUILD DO ESTOQUESERVICE, ENTAO, PARA CONTORNAR UM
-			 * DEADLOCK ENTRE OS BUILDS, JOGAMOS O OBJETO PEDIDOSERVICEIMPL EM
-			 * MEMORIA, E ASSIM QUE O ESTOQUESERVICE FOR EFFETUAR O BUILD DO
-			 * PEDIDOSSERVICE, VERIFICAMOS QUE ELE JA ESTA EM MEMORIA E
-			 * RETORNAMOS ESSE OBJETO. SENDO QUE MANTEMOS TEMPORARIAMENTE ESSES
-			 * OBJETOS EM MEMORIA POIS O MECANISMO DO MOCKIT DEVE SER EXECUTADO
-			 * PARA CADA TESTE UNITARIO, POIS ESSE EH O CICLO DE VIDA DAS
-			 * IMPLEMENTACOES MOCKADAS DOS METODOS. ELAS VALEM APENAS EM CADA
-			 * TESTE UNITARIO.
+			 * ESSE ATRIBUTO FOI CRIADO PARA CONTORNAR O PROBLEMA DE REFERENCIAS CICLICAS
+			 * ENTRE OS SERVICOS, POR EXEMPLO, PEDIDOSERVICE E ESTOQUE SERVICE. QUANDO VAMOS
+			 * EFETUAR O BUILD DO PEDIDOSERVICE, TEMOS QUE EFETUAR O BUILD DO
+			 * ESTOQUESERVICE, ENTAO, PARA CONTORNAR UM DEADLOCK ENTRE OS BUILDS, JOGAMOS O
+			 * OBJETO PEDIDOSERVICEIMPL EM MEMORIA, E ASSIM QUE O ESTOQUESERVICE FOR
+			 * EFFETUAR O BUILD DO PEDIDOSSERVICE, VERIFICAMOS QUE ELE JA ESTA EM MEMORIA E
+			 * RETORNAMOS ESSE OBJETO. SENDO QUE MANTEMOS TEMPORARIAMENTE ESSES OBJETOS EM
+			 * MEMORIA POIS O MECANISMO DO MOCKIT DEVE SER EXECUTADO PARA CADA TESTE
+			 * UNITARIO, POIS ESSE EH O CICLO DE VIDA DAS IMPLEMENTACOES MOCKADAS DOS
+			 * METODOS. ELAS VALEM APENAS EM CADA TESTE UNITARIO.
 			 */
 			service = (T) Class.forName(serviceNameImpl).newInstance();
 			mapTemporarioServices.put(classe, service);
 		} catch (Exception e1) {
-			throw new IllegalStateException("Nao foi possivel instanciar a implementacao do servico \""
-					+ serviceNameImpl + "\"", e1);
+			throw new IllegalStateException(
+					"Nao foi possivel instanciar a implementacao do servico \"" + serviceNameImpl + "\"", e1);
 		}
 
 		initDependencias(service);
@@ -92,7 +98,8 @@ public class ServiceBuilder {
 			if (campo.isAnnotationPresent(PersistenceContext.class)) {
 				if (em == null) {
 					throw new IllegalStateException("O entity manager esta nulo e nao pode ser injetado no servico "
-							+ service.getClass().getName() + ". Execute o metodo ServiceBuilder.config(EntityManager).");
+							+ service.getClass().getName()
+							+ ". Execute o metodo ServiceBuilder.config(EntityManager).");
 				}
 				inject(service, em, campo.getName());
 			}
@@ -108,8 +115,8 @@ public class ServiceBuilder {
 				}
 			}
 		} catch (Exception e) {
-			throw new IllegalStateException("Falha a execucao do metodo init do servico "
-					+ service.getClass().getName(), e);
+			throw new IllegalStateException(
+					"Falha a execucao do metodo init do servico " + service.getClass().getName(), e);
 		}
 
 	}

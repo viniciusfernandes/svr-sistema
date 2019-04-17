@@ -17,7 +17,8 @@ public class MensagemEmail implements Serializable {
 	private final String remetente;
 	private final String titulo;
 
-	public MensagemEmail(String titutlo, String remetente, String destinatario, String destinatarioCc, String conteudo) {
+	public MensagemEmail(String titutlo, String remetente, String destinatario, String destinatarioCc,
+			String conteudo) {
 		this.titulo = titutlo;
 		this.remetente = remetente;
 		this.destinatario = destinatario;
@@ -66,5 +67,16 @@ public class MensagemEmail implements Serializable {
 
 	public String getTitulo() {
 		return titulo;
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder texto = new StringBuilder("email: {\n\t");
+		texto.append("titulo: \"").append(titulo).append("\",\n\t");
+		texto.append("destinatario: \"").append(destinatario).append("\",\n\t");
+		texto.append("destinatarioCc: \"").append(destinatarioCc).append("\",\n\t");
+		texto.append("remetente: \"").append(remetente).append("\",\n\t");
+		texto.append("}\n");
+		return texto.toString();
 	}
 }
