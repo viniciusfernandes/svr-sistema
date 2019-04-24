@@ -13,6 +13,7 @@ import br.com.svr.service.entity.Representada;
 import br.com.svr.service.entity.Usuario;
 import br.com.svr.service.exception.BusinessException;
 import br.com.svr.service.test.builder.ServiceBuilder;
+import br.com.svr.service.test.util.TestUtils;
 
 public class ComissaoServiceTest extends AbstractTest {
 	private ComissaoService comissaoService;

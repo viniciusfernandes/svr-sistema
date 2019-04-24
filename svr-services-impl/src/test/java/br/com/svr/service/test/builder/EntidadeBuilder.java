@@ -39,7 +39,7 @@ import br.com.svr.service.entity.Representada;
 import br.com.svr.service.entity.Transportadora;
 import br.com.svr.service.entity.Usuario;
 import br.com.svr.service.nfe.constante.TipoModalidadeFrete;
-import br.com.svr.service.test.TestUtils;
+import br.com.svr.service.test.util.TestUtils;
 import br.com.svr.service.validacao.ValidadorDocumento;
 
 public class EntidadeBuilder {

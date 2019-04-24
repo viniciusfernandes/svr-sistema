@@ -93,8 +93,8 @@ public class NFeServiceTest extends AbstractTest {
 
 		List<DuplicataNFe> listaDuplicata = nFeService.gerarDuplicataDataAmericanaByIdPedido(idPedido);
 
-		assertTrue("A lista de duplicatas deve conter ao menos 1 elemento para pedidos a prazo", listaDuplicata != null
-				&& listaDuplicata.size() >= 1);
+		assertTrue("A lista de duplicatas deve conter ao menos 1 elemento para pedidos a prazo",
+				listaDuplicata != null && listaDuplicata.size() >= 1);
 
 		CobrancaNFe cobrNfe = new CobrancaNFe();
 		cobrNfe.setListaDuplicata(listaDuplicata);
@@ -273,15 +273,14 @@ public class NFeServiceTest extends AbstractTest {
 		}
 		p = pedidoService.pesquisarPedidoById(p.getId());
 		i = pedidoService.pesquisarItemPedidoById(i.getId());
+
 		Double valPed = 2200d;
-		// p = recarregarEntidade(Pedido.class, p.getId());
-		// assertEquals("O valor total do pedido nao confere", valPed, (Double)
-		// p.getValorPedido());
+		p = recarregarEntidade(Pedido.class, p.getId());
+		assertEquals("O valor total do pedido nao confere", valPed, (Double) p.getValorPedido());
 
 		NFe nfe = gerarNFeItensTodosItensPedido(p.getId());
-		String num = null;
 		try {
-			num = nFeService.emitirNFeSaida(nfe, p.getId());
+			nFeService.emitirNFeSaida(nfe, p.getId());
 		} catch (BusinessException e) {
 			printMensagens(e);
 		}
@@ -317,8 +316,8 @@ public class NFeServiceTest extends AbstractTest {
 
 		Integer qtdeFrac = null;
 		for (DetalhamentoProdutoServicoNFe det : nFe.getDadosNFe().getListaDetalhamentoProdutoServicoNFe()) {
-			qtdeFrac = nFeService
-					.pesqusisarQuantidadeTotalFracionadoByIdItemPedidoNFeExcluida(det.getNumeroItem(), num);
+			qtdeFrac = nFeService.pesqusisarQuantidadeTotalFracionadoByIdItemPedidoNFeExcluida(det.getNumeroItem(),
+					num);
 			assertEquals("Todos os itens do pedido foram emitidos e nao deve haver itens fracionados", (Integer) 0,
 					qtdeFrac);
 		}
@@ -441,8 +440,8 @@ public class NFeServiceTest extends AbstractTest {
 
 		for (DetalhamentoProdutoServicoNFe det : nFe.getDadosNFe().getListaDetalhamentoProdutoServicoNFe()) {
 			qtdeFrac = nFeService.pesquisarTotalItemFracionadoByNumeroItemNumeroNFe(det.getNumeroItem(), num);
-			assertEquals("As quantidades fracionadas e quantidades tributaveis da NFe devem ser as mesmas", (int) det
-					.getProduto().getQuantidadeTributavel(), qtdeFrac);
+			assertEquals("As quantidades fracionadas e quantidades tributaveis da NFe devem ser as mesmas",
+					(int) det.getProduto().getQuantidadeTributavel(), qtdeFrac);
 		}
 
 		lItem = nFeService.pesquisarQuantitadeItemRestanteByIdPedido(idPedido);
@@ -566,8 +565,8 @@ public class NFeServiceTest extends AbstractTest {
 		}
 
 		List<Integer[]> lFrac = nFeService.pesquisarTotalItemFracionadoByNumeroNFe(Integer.parseInt(numNFe));
-		assertTrue("NFe de triangularizacao nao pode conter itens fracionados. Verificar a validacao.", lFrac == null
-				|| lFrac.isEmpty());
+		assertTrue("NFe de triangularizacao nao pode conter itens fracionados. Verificar a validacao.",
+				lFrac == null || lFrac.isEmpty());
 	}
 
 	@Test

@@ -39,9 +39,9 @@ import br.com.svr.service.entity.Transportadora;
 import br.com.svr.service.entity.Usuario;
 import br.com.svr.service.exception.BusinessException;
 import br.com.svr.service.mensagem.email.AnexoEmail;
-import br.com.svr.service.test.TestUtils;
 import br.com.svr.service.test.builder.EntidadeBuilder;
 import br.com.svr.service.test.builder.ServiceBuilder;
+import br.com.svr.service.test.util.TestUtils;
 
 public class GeradorPedido {
 

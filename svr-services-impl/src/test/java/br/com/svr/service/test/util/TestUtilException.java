@@ -1,4 +1,4 @@
-package br.com.svr.service.test;
+package br.com.svr.service.test.util;
 
 public class TestUtilException extends RuntimeException {
 
