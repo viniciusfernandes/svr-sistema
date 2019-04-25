@@ -1,4 +1,4 @@
-package br.com.svr.service.test;
+package br.com.svr.service.test.util;
 
 import java.util.Calendar;
 import java.util.Date;

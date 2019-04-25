@@ -44,6 +44,7 @@ import br.com.svr.service.entity.Usuario;
 import br.com.svr.service.exception.BusinessException;
 import br.com.svr.service.mensagem.email.AnexoEmail;
 import br.com.svr.service.test.builder.ServiceBuilder;
+import br.com.svr.service.test.util.TestUtils;
 import br.com.svr.util.DateUtils;
 import br.com.svr.util.StringUtils;
 
