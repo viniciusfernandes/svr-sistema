@@ -101,6 +101,11 @@
 
 	<build>
 		<finalName>svr-services-test</finalName>
+		<resources>
+			<resource>
+				<directory>src/test/resources</directory>
+			</resource>
+		</resources>
 	</build>
 
 </project>

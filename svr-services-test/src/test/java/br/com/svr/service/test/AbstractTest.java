@@ -44,7 +44,7 @@ public abstract class AbstractTest {
 		try {
 			System.out.println("++++++++++++++++++++ Vai criar o entity manager ++++++++++++++++++++");
 
-			emf = Persistence.createEntityManagerFactory("svr");
+			emf = Persistence.createEntityManagerFactory("svr-teste");
 			System.out.println("++++++++++++++++++++ Criou o entity manager ++++++++++++++++++++");
 		} catch (Throwable e) {
 			e.printStackTrace();
