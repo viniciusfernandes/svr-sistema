@@ -71,15 +71,27 @@
 							<groupId>br.com.svr</groupId>
 							<artifactId>svr-ui</artifactId>
 							<contextRoot>/vendas</contextRoot>
+							<bundleFileName>svr-ui.war</bundleFileName>
+
 						</webModule>
 						<ejbModule>
 							<groupId>br.com.svr</groupId>
 							<artifactId>svr-services-impl</artifactId>
+							<bundleFileName>svr-services-impl.jar</bundleFileName>
+
 						</ejbModule>
 
 						<jarModule>
 							<groupId>br.com.svr</groupId>
 							<artifactId>svr-services</artifactId>
+							<bundleFileName>svr-services.jar</bundleFileName>
+							<bundleDir>lib</bundleDir>
+						</jarModule>
+						
+						<jarModule>
+							<groupId>br.com.svr</groupId>
+							<artifactId>svr-utils</artifactId>
+							<bundleFileName>svr-utils.jar</bundleFileName>
 							<bundleDir>lib</bundleDir>
 						</jarModule>
 					</modules>
