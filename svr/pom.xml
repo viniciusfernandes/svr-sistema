@@ -60,6 +60,7 @@
 				<configuration>
 					<!-- INSERINDO OS AS DEPENDENCIAS .JAR NO DORETORIO LIB -->
 					<defaultLibBundleDir>lib</defaultLibBundleDir>
+					<generateApplicationXml>true</generateApplicationXml>
 					<archive>
 						<manifest>
 							<addClasspath>true</addClasspath>
@@ -71,7 +72,19 @@
 							<artifactId>svr-ui</artifactId>
 							<contextRoot>/vendas</contextRoot>
 						</webModule>
+						<ejbModule>
+							<groupId>br.com.svr</groupId>
+							<artifactId>svr-services-impl</artifactId>
+						</ejbModule>
+
+						<jarModule>
+							<groupId>br.com.svr</groupId>
+							<artifactId>svr-services</artifactId>
+							<bundleDir>lib</bundleDir>
+						</jarModule>
 					</modules>
+
+
 				</configuration>
 			</plugin>
 
