@@ -14,7 +14,7 @@ public class RegistroEstoqueDAO extends GenericDAO<RegistroEstoque> {
 	}
 
 	public void removerRegistroByDataLimite(Date dataLimite) {
-		entityManager.createQuery("delete from RegistroEstoque r where r.dataOperacao <= :dataLimite")
+		em.createQuery("delete from RegistroEstoque r where r.dataOperacao <= :dataLimite")
 				.setParameter("dataLimite", dataLimite).executeUpdate();
 	}
 
@@ -25,32 +25,32 @@ public class RegistroEstoqueDAO extends GenericDAO<RegistroEstoque> {
 	public List<RegistroEstoque> pesquisarRegistroByIdItemEstoque(Integer idItemEstoque, Integer indiceInicial,
 			Integer numeroMaxRegistros) {
 		if (indiceInicial == null || numeroMaxRegistros == null) {
-			return entityManager
+			return em
 					.createQuery("select r from RegistroEstoque r where r.idItemEstoque = :idItemEstoque",
 							RegistroEstoque.class).setParameter("idItemEstoque", idItemEstoque).getResultList();
 		}
 		return QueryUtil.paginar(
-				entityManager.createQuery("select r from RegistroEstoque r where r.idItemEstoque = :idItemEstoque",
+				em.createQuery("select r from RegistroEstoque r where r.idItemEstoque = :idItemEstoque",
 						RegistroEstoque.class).setParameter("idItemEstoque", idItemEstoque), indiceInicial,
 				numeroMaxRegistros);
 	}
 
 	public List<RegistroEstoque> pesquisarRegistroByIdPedido(Integer idPedido) {
-		return entityManager
+		return em
 				.createQuery("select r from RegistroEstoque r where r.idPedido = :idPedido", RegistroEstoque.class)
 				.setParameter("idPedido", idPedido).getResultList();
 
 	}
 
 	public List<RegistroEstoque> pesquisarRegistroEstoqueByIdItemPedido(Integer idItemPedido) {
-		return entityManager
+		return em
 				.createQuery("select r from RegistroEstoque r where r.idItemPedido = :idItemPedido",
 						RegistroEstoque.class).setParameter("idItemPedido", idItemPedido).getResultList();
 	}
 
 	public Long pesquisarTotalRegistroByItemEstoque(Integer idItemEstoque) {
 		return QueryUtil.gerarRegistroUnico(
-				entityManager.createQuery(
+				em.createQuery(
 						"select count(r.id) from RegistroEstoque r where r.idItemEstoque=:idItemEstoque").setParameter(
 						"idItemEstoque", idItemEstoque), Long.class, 0L);
 	}

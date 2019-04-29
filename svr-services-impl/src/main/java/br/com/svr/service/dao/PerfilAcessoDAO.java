@@ -14,6 +14,6 @@ public class PerfilAcessoDAO extends GenericDAO<PerfilAcesso> {
 
 	@SuppressWarnings("unchecked")
 	public List<PerfilAcesso> pesquisarTodos() {
-		return this.entityManager.createQuery("SELECT p FROM PerfilAcesso p order by p.descricao asc ").getResultList();
+		return this.em.createQuery("SELECT p FROM PerfilAcesso p order by p.descricao asc ").getResultList();
 	}
 }

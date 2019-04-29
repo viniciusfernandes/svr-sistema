@@ -213,11 +213,7 @@ public class PedidoServiceImpl implements PedidoService {
 			quantidadeRecepcionada = 0;
 		}
 
-		Integer qtdeItem = pesquisarQuantidadeItemPedido(idItemPedido);
-		if (qtdeItem == null) {
-			throw new BusinessException("O item de pedido de código " + idItemPedido
-					+ " pesquisado não existe no sistema");
-		}
+		final int qtdeItem = pesquisarQuantidadeItemPedido(idItemPedido);
 
 		if (qtdeItem < quantidadeRecepcionada) {
 			Integer idPedido = pesquisarIdPedidoByIdItemPedido(idItemPedido);
@@ -355,8 +351,8 @@ public class PedidoServiceImpl implements PedidoService {
 			} else if (pedido.isRevenda() && !item.contemAliquotaComissao()) {
 				// A comissao cadastrada para o material tem prioridade a
 				// comissao configurada para o vendedor.
-				comissaoVenda = comissaoService.pesquisarComissaoVigenteProduto(item.getMaterial().getId(), item
-						.getFormaMaterial().indexOf());
+				comissaoVenda = comissaoService.pesquisarComissaoVigenteProduto(item.getMaterial().getId(),
+						item.getFormaMaterial().indexOf());
 
 				// Caso nao exista comissao configurada para o material devemos
 				// utilizar a comissao configurada para o vendedor.
@@ -386,14 +382,10 @@ public class PedidoServiceImpl implements PedidoService {
 				valorComissionadoRepresentada = precoItem * (aliqRepresentada == null ? 0 : aliqRepresentada);
 			} else {
 				Usuario vendedor = usuarioService.pesquisarUsuarioResumidoById(pedido.getIdVendedor());
-				throw new BusinessException(
-						"Não existe comissão configurada para o vendedor \""
-								+ vendedor.getNomeCompleto()
-								+ "\". Problema para calular a comissão do item No. "
-								+ item.getSequencial()
-								+ " do pedido No. "
-								+ pedido.getId()
-								+ ". Também pode não existir comissão padrão configurada para o material desse item, verifique as configurações do sistema.");
+				throw new BusinessException("Não existe comissão configurada para o vendedor \""
+						+ vendedor.getNomeCompleto() + "\". Problema para calular a comissão do item No. "
+						+ item.getSequencial() + " do pedido No. " + pedido.getId()
+						+ ". Também pode não existir comissão padrão configurada para o material desse item, verifique as configurações do sistema.");
 			}
 			item.setAliquotaComissao(aliqComissao);
 			item.setAliquotaComissaoRepresentada(aliqRepresentada);
@@ -428,15 +420,13 @@ public class PedidoServiceImpl implements PedidoService {
 			dataInicial = new Date();
 		}
 		/*
-		 * Calendar cal = Calendar.getInstance(); cal.setTime(dataInicial);
-		 * Integer diaCorrido = null; for (String dia : diasPag) { try {
-		 * diaCorrido = Integer.parseInt(dia); } catch (NumberFormatException e)
-		 * { continue; } cal.add(Calendar.DAY_OF_MONTH, diaCorrido);
-		 * lista.add(cal.getTime());
+		 * Calendar cal = Calendar.getInstance(); cal.setTime(dataInicial); Integer
+		 * diaCorrido = null; for (String dia : diasPag) { try { diaCorrido =
+		 * Integer.parseInt(dia); } catch (NumberFormatException e) { continue; }
+		 * cal.add(Calendar.DAY_OF_MONTH, diaCorrido); lista.add(cal.getTime());
 		 * 
-		 * // Retornando a data atual para somar os outros dias corridos e //
-		 * evitar criar outros objetos Calendar. cal.add(Calendar.DAY_OF_MONTH,
-		 * -diaCorrido); }
+		 * // Retornando a data atual para somar os outros dias corridos e // evitar
+		 * criar outros objetos Calendar. cal.add(Calendar.DAY_OF_MONTH, -diaCorrido); }
 		 */
 		Integer[] dias = new Integer[diasPag.length];
 		for (int i = 0; i < dias.length; i++) {
@@ -666,11 +656,10 @@ public class PedidoServiceImpl implements PedidoService {
 	/*
 	 * Esse metodo foi implementado para garantir a coerencia na configuracao do
 	 * Tipo de Pedido. Estavam sendo cadastrados pedidos de representacao para o
-	 * revendedor. Por isso devemos garantir que se a representada eh um
-	 * revendedor, entao o pedido deve ser de REVENDA. Esse problema pode surgir
-	 * novamente ao se mudar o tipo de relacionamento da representada de
-	 * REVENDEDOR para REPRESENTACAO, consequentemente os calculos de comissao
-	 * estarao errados.
+	 * revendedor. Por isso devemos garantir que se a representada eh um revendedor,
+	 * entao o pedido deve ser de REVENDA. Esse problema pode surgir novamente ao se
+	 * mudar o tipo de relacionamento da representada de REVENDEDOR para
+	 * REPRESENTACAO, consequentemente os calculos de comissao estarao errados.
 	 */
 	private void configurarTipoVenda(Pedido pedido) {
 		if (pedido == null || !pedido.isVenda() || pedido.getRepresentada() == null) {
@@ -743,8 +732,9 @@ public class PedidoServiceImpl implements PedidoService {
 				iClone.setEncomendado(false);
 				inserirItemPedido(pClone.getId(), iClone);
 			} catch (IllegalStateException e) {
-				throw new BusinessException("Falha no processo de copia do item No. " + itemPedido.getId()
-						+ " do pedido No. " + idPedido, e);
+				throw new BusinessException(
+						"Falha no processo de copia do item No. " + itemPedido.getId() + " do pedido No. " + idPedido,
+						e);
 			}
 		}
 		return pClone.getId();
@@ -752,8 +742,8 @@ public class PedidoServiceImpl implements PedidoService {
 
 	/**
 	 * Aqui estamos exigindo que sempre tenhamos uma nova transacao pois se um
-	 * pedido tiver problemas para ser enviado para o empacotamento, isso nao
-	 * deve interferir no empacotamento dos outros pedidos.
+	 * pedido tiver problemas para ser enviado para o empacotamento, isso nao deve
+	 * interferir no empacotamento dos outros pedidos.
 	 */
 	@Override
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
@@ -767,8 +757,8 @@ public class PedidoServiceImpl implements PedidoService {
 
 	/**
 	 * Aqui estamos exigindo que sempre tenhamos uma nova transacao pois se um
-	 * pedido tiver problemas para ser enviado para o empacotamento, isso nao
-	 * deve interferir no empacotamento dos outros pedidos.
+	 * pedido tiver problemas para ser enviado para o empacotamento, isso nao deve
+	 * interferir no empacotamento dos outros pedidos.
 	 */
 	@Override
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
@@ -792,8 +782,8 @@ public class PedidoServiceImpl implements PedidoService {
 	@TransactionAttribute(TransactionAttributeType.SUPPORTS)
 	private void enviarCompra(Pedido pedido, AnexoEmail pdfPedido, AnexoEmail... anexos) throws BusinessException {
 		try {
-			emailService.enviar(GeradorPedidoEmail.gerarMensagem(pedido, TipoMensagemPedido.MENSAGEM_COMPRA, pdfPedido,
-					anexos));
+			emailService.enviar(
+					GeradorPedidoEmail.gerarMensagem(pedido, TipoMensagemPedido.MENSAGEM_COMPRA, pdfPedido, anexos));
 		} catch (NotificacaoException e) {
 			StringBuilder mensagem = new StringBuilder();
 			mensagem.append("Falha no envio do pedido de compra No. ").append(pedido.getId()).append(" do comprador ")
@@ -929,8 +919,8 @@ public class PedidoServiceImpl implements PedidoService {
 		}
 
 		try {
-			emailService.enviar(GeradorPedidoEmail.gerarMensagem(pedido, TipoMensagemPedido.MENSAGEM_VENDA, pdfPedido,
-					anexos));
+			emailService.enviar(
+					GeradorPedidoEmail.gerarMensagem(pedido, TipoMensagemPedido.MENSAGEM_VENDA, pdfPedido, anexos));
 			// Caso o contato tambem queira receber o email
 			if (pedido.isClienteNotificadoVenda()) {
 				emailService.enviar(GeradorPedidoEmail.gerarMensagem(pedido, TipoMensagemPedido.MENSAGEM_VENDA_CLIENTE,
@@ -1038,13 +1028,12 @@ public class PedidoServiceImpl implements PedidoService {
 		}
 
 		/*
-		 * Esse metodo foi implementado para garantir a coerencia na
-		 * configuracao do Tipo de Pedido. Estavam sendo cadastrados pedidos de
-		 * representacao para o revendedor. Por isso devemos garantir que se a
-		 * representada eh um revendedor, entao o pedido deve ser de REVENDA.
-		 * Esse problema pode surgir novamente ao se mudar o tipo de
-		 * relacionamento da representada de REVENDEDOR para REPRESENTACAO,
-		 * consequentemente os calculos de comissao estarao errados.
+		 * Esse metodo foi implementado para garantir a coerencia na configuracao do
+		 * Tipo de Pedido. Estavam sendo cadastrados pedidos de representacao para o
+		 * revendedor. Por isso devemos garantir que se a representada eh um revendedor,
+		 * entao o pedido deve ser de REVENDA. Esse problema pode surgir novamente ao se
+		 * mudar o tipo de relacionamento da representada de REVENDEDOR para
+		 * REPRESENTACAO, consequentemente os calculos de comissao estarao errados.
 		 */
 		configurarTipoVenda(pedido);
 
@@ -1057,8 +1046,8 @@ public class PedidoServiceImpl implements PedidoService {
 
 		final boolean vendaPermitida = usuarioService.isVendaPermitida(idCli, idProp);
 		/*
-		 * Estamos proibindo que qualquer vendedor cadastre um NOVO pedido para
-		 * um cliente que nao esteja associado em sua carteira de clientes.
+		 * Estamos proibindo que qualquer vendedor cadastre um NOVO pedido para um
+		 * cliente que nao esteja associado em sua carteira de clientes.
 		 */
 		if (pedido.isVenda() && !vendaPermitida) {
 
@@ -1069,17 +1058,15 @@ public class PedidoServiceImpl implements PedidoService {
 					+ (proprietario != null ? proprietario.getNome() + " - " + proprietario.getEmail() : idCli));
 		} else if (pedido.isVenda() && vendaPermitida) {
 			/*
-			 * Garantindo que o vendedor do pedido eh o vendedor associado ao
-			 * cliente.
+			 * Garantindo que o vendedor do pedido eh o vendedor associado ao cliente.
 			 */
 			Integer idVend = clienteService.pesquisarIdVendedorByIdCliente(pedido.getCliente().getId());
 			if (!idVend.equals(idProp)) {
 				/*
-				 * Efetuando o vinculo entre o vendedor e o pedido pois o
-				 * vendedor eh obrigatorio pois agora eh possivel que um outro
-				 * vendedor com o perfil de administrador faca cadastro de
-				 * pedidos em nome de outro. Por isso estamos ajustando o
-				 * vendedor correto.
+				 * Efetuando o vinculo entre o vendedor e o pedido pois o vendedor eh
+				 * obrigatorio pois agora eh possivel que um outro vendedor com o perfil de
+				 * administrador faca cadastro de pedidos em nome de outro. Por isso estamos
+				 * ajustando o vendedor correto.
 				 */
 				Usuario vend = usuarioService.pesquisarVendedorResumidoByIdCliente(pedido.getCliente().getId());
 				if (vend == null) {
@@ -1153,19 +1140,17 @@ public class PedidoServiceImpl implements PedidoService {
 		itemPedido.setPedido(pedido);
 		/*
 		 * Atualizando o valor de cada unidade do item que podera ser usado
-		 * posteriormente em relatorios, alem disso, eh pbrigatorio para
-		 * inclusao do item no sistema
+		 * posteriormente em relatorios, alem disso, eh pbrigatorio para inclusao do
+		 * item no sistema
 		 */
 		itemPedido.setPrecoUnidade(CalculadoraPreco.calcularPorUnidade(itemPedido));
 
 		/*
-		 * Caso o ipi seja nulo, isso indica que o usuario nao digitou o valor
-		 * entao
+		 * Caso o ipi seja nulo, isso indica que o usuario nao digitou o valor entao
 		 * 
-		 * utilizaremos os valores definidos para as formas dos materiais, que
-		 * eh o default do sistema. Esse preenchimento foi realizado pois agora
-		 * temos que incluir essa informacao do pedido.html que sera enviado
-		 * para o cliente.
+		 * utilizaremos os valores definidos para as formas dos materiais, que eh o
+		 * default do sistema. Esse preenchimento foi realizado pois agora temos que
+		 * incluir essa informacao do pedido.html que sera enviado para o cliente.
 		 */
 		Double aliquotaIPI = itemPedido.getAliquotaIPI();
 		final boolean ipiPreenchido = aliquotaIPI != null;
@@ -1186,16 +1171,16 @@ public class PedidoServiceImpl implements PedidoService {
 		final Double precoUnidadeIPI = CalculadoraPreco.calcularPorUnidadeIPI(itemPedido);
 
 		itemPedido.setPrecoUnidadeIPI(precoUnidadeIPI);
-		itemPedido.setPrecoMinimo(NumeroUtils.arredondarValor2Decimais(estoqueService
-				.calcularPrecoMinimoItemEstoque(itemPedido)));
+		itemPedido.setPrecoMinimo(
+				NumeroUtils.arredondarValor2Decimais(estoqueService.calcularPrecoMinimoItemEstoque(itemPedido)));
 		itemPedido.setPrecoCusto(estoqueService.calcularPrecoCustoItemEstoque(itemPedido));
 
 		boolean isItemNovo = false;
 		/*
 		 * O valor sequencial sera utilizado para que a representada identifique
-		 * rapidamento qual eh o item que deve ser customizado, assim o vendedor
-		 * podera fazer referencias ao item no campo de observacao, por exemplo:
-		 * o item 1 deve ter acabamento, etc.
+		 * rapidamento qual eh o item que deve ser customizado, assim o vendedor podera
+		 * fazer referencias ao item no campo de observacao, por exemplo: o item 1 deve
+		 * ter acabamento, etc.
 		 */
 		if (isItemNovo = itemPedido.isNovo()) {
 			itemPedido.setSequencial(gerarSequencialItemPedido(idPedido));
@@ -1224,8 +1209,8 @@ public class PedidoServiceImpl implements PedidoService {
 		double valPedVelho = pesquisarValorPedidoIPI(idPedido);
 		double valPedNovo = 0;
 		/*
-		 * Devemos sempre atualizar o valor do pedido mesmo em caso de excecao
-		 * de validacoes, caso contrario teremos um valor nulo na base de dados.
+		 * Devemos sempre atualizar o valor do pedido mesmo em caso de excecao de
+		 * validacoes, caso contrario teremos um valor nulo na base de dados.
 		 */
 		atualizarValoresPedido(idPedido);
 
@@ -1238,8 +1223,8 @@ public class PedidoServiceImpl implements PedidoService {
 		// sendo orcado.
 		if (pedido.isOrcamentoAberto() && pedido.isVenda()) {
 			valPedNovo = pesquisarValorPedidoIPI(idPedido);
-			Integer idCliente = pedido.getCliente() == null ? pesquisarIdClienteByIdPedido(pedido.getId()) : pedido
-					.getCliente().getId();
+			Integer idCliente = pedido.getCliente() == null ? pesquisarIdClienteByIdPedido(pedido.getId())
+					: pedido.getCliente().getId();
 			IndicadorCliente ind = recalcularIndiceValorOrcamento(idCliente, valPedVelho, valPedNovo);
 
 			negociacaoService.alterarNegociacaoAbertaIndiceConversaoValorByIdCliente(idCliente,
@@ -1327,8 +1312,8 @@ public class PedidoServiceImpl implements PedidoService {
 
 	/*
 	 * Esse metodo retorna um pedido pois, apos a inclusao de um novo pedido,
-	 * configuramos a data de inclusao como sendo a data atual, e essa
-	 * informacao deve ser retornada para o componente chamador.
+	 * configuramos a data de inclusao como sendo a data atual, e essa informacao
+	 * deve ser retornada para o componente chamador.
 	 */
 	@Override
 	@TransactionAttribute(TransactionAttributeType.REQUIRED)
@@ -1381,7 +1366,8 @@ public class PedidoServiceImpl implements PedidoService {
 	public boolean isPedidoEnviado(Integer idPedido) {
 		SituacaoPedido situacao = QueryUtil.gerarRegistroUnico(
 				this.entityManager.createQuery("select p.situacaoPedido from Pedido p where p.id = :idPedido")
-						.setParameter("idPedido", idPedido), SituacaoPedido.class, null);
+						.setParameter("idPedido", idPedido),
+				SituacaoPedido.class, null);
 
 		return SituacaoPedido.ENVIADO.equals(situacao);
 
@@ -1404,8 +1390,8 @@ public class PedidoServiceImpl implements PedidoService {
 			listaPedido = new ArrayList<Pedido>();
 		}
 
-		return new PaginacaoWrapper<Pedido>(pesquisarTotalPedidoByIdClienteIdVendedorIdFornecedor(idCliente,
-				idVendedor, idFornecedor, isOrcamento, isCompra, null), listaPedido);
+		return new PaginacaoWrapper<Pedido>(pesquisarTotalPedidoByIdClienteIdVendedorIdFornecedor(idCliente, idVendedor,
+				idFornecedor, isOrcamento, isCompra, null), listaPedido);
 	}
 
 	@Override
@@ -1506,7 +1492,8 @@ public class PedidoServiceImpl implements PedidoService {
 	@TransactionAttribute(TransactionAttributeType.SUPPORTS)
 	public List<Pedido> pesquisarEntregaVendaByPeriodo(Periodo periodo) {
 		StringBuilder select = new StringBuilder();
-		select.append("select new Pedido(p.id, p.dataEntrega, p.valorPedido, p.cliente.nomeFantasia, p.cliente.razaoSocial, p.representada.nomeFantasia) ");
+		select.append(
+				"select new Pedido(p.id, p.dataEntrega, p.valorPedido, p.cliente.nomeFantasia, p.cliente.razaoSocial, p.representada.nomeFantasia) ");
 		select.append("from Pedido p ");
 		select.append("where p.tipoPedido != :tipoPedido and ");
 		select.append(" p.dataEntrega >= :dataInicio and ");
@@ -1525,7 +1512,7 @@ public class PedidoServiceImpl implements PedidoService {
 	public List<Pedido> pesquisarEnviadosByPeriodoERepresentada(Periodo periodo, Integer idRepresentada) {
 		StringBuilder select = new StringBuilder()
 
-		.append("select new Pedido(p.id, p.dataEnvio, p.valorPedido, p.cliente.razaoSocial) ")
+				.append("select new Pedido(p.id, p.dataEnvio, p.valorPedido, p.cliente.razaoSocial) ")
 				.append("from Pedido p where p.situacaoPedido in :situacoes and ")
 				.append(" p.dataEnvio >= :dataInicio and ").append(" p.dataEnvio <= :dataFim and ")
 				.append("p.tipoPedido != :tipoPedido ");
@@ -1844,10 +1831,9 @@ public class PedidoServiceImpl implements PedidoService {
 		if (idPedido == null) {
 			return null;
 		}
-		return QueryUtil.gerarRegistroUnico(
-				this.entityManager.createQuery(
-						"select v.nome from Pedido p inner join p.proprietario v where p.id = :idPedido ")
-						.setParameter("idPedido", idPedido), String.class, null);
+		return QueryUtil.gerarRegistroUnico(this.entityManager
+				.createQuery("select v.nome from Pedido p inner join p.proprietario v where p.id = :idPedido ")
+				.setParameter("idPedido", idPedido), String.class, null);
 	}
 
 	@Override
@@ -1912,7 +1898,8 @@ public class PedidoServiceImpl implements PedidoService {
 	@TransactionAttribute(TransactionAttributeType.SUPPORTS)
 	public List<Pedido> pesquisarPedidoCompraByPeriodo(Periodo periodo) {
 		StringBuilder select = new StringBuilder();
-		select.append("select new Pedido(p.id, p.tipoPedido, p.dataEntrega, p.valorPedido, p.cliente.nomeFantasia, p.cliente.razaoSocial, p.representada.nomeFantasia) ");
+		select.append(
+				"select new Pedido(p.id, p.tipoPedido, p.dataEntrega, p.valorPedido, p.cliente.nomeFantasia, p.cliente.razaoSocial, p.representada.nomeFantasia) ");
 		select.append("from Pedido p ");
 		select.append("where p.tipoPedido = :tipoPedido and ");
 		select.append("p.dataEnvio >= :dataInicio and ");
@@ -1921,8 +1908,7 @@ public class PedidoServiceImpl implements PedidoService {
 		select.append("order by p.dataEntrega, p.id, p.representada.nomeFantasia, p.cliente.nomeFantasia ");
 
 		return this.entityManager.createQuery(select.toString()).setParameter("dataInicio", periodo.getInicio())
-				.setParameter("dataFim", periodo.getFim())
-				.setParameter("situacoes", pesquisarSituacaoCompraEfetivada())
+				.setParameter("dataFim", periodo.getFim()).setParameter("situacoes", pesquisarSituacaoCompraEfetivada())
 				.setParameter("tipoPedido", TipoPedido.COMPRA).getResultList();
 	}
 
@@ -1967,7 +1953,8 @@ public class PedidoServiceImpl implements PedidoService {
 	@TransactionAttribute(TransactionAttributeType.SUPPORTS)
 	public List<Pedido> pesquisarPedidoVendaByPeriodo(Periodo periodo) {
 		StringBuilder select = new StringBuilder();
-		select.append("select new Pedido(p.id, p.dataEntrega, p.valorPedido, p.cliente.nomeFantasia, p.cliente.razaoSocial, p.representada.nomeFantasia) ");
+		select.append(
+				"select new Pedido(p.id, p.dataEntrega, p.valorPedido, p.cliente.nomeFantasia, p.cliente.razaoSocial, p.representada.nomeFantasia) ");
 		select.append("from Pedido p ");
 		select.append("where p.tipoPedido != :tipoPedido and ");
 		select.append(" p.dataEnvio >= :dataInicio and ");
@@ -2203,7 +2190,8 @@ public class PedidoServiceImpl implements PedidoService {
 	private List<ItemPedido> pesquisarValoresItemPedidoResumidoByPeriodo(Periodo periodo,
 			List<SituacaoPedido> listaSituacao, TipoPedido tipoPedido) {
 		StringBuilder select = new StringBuilder();
-		select.append("select new ItemPedido(i.precoUnidade, i.quantidade, i.aliquotaIPI, i.aliquotaICMS, i.valorComissionado, i.pedido.aliquotaComissao) from ItemPedido i ");
+		select.append(
+				"select new ItemPedido(i.precoUnidade, i.quantidade, i.aliquotaIPI, i.aliquotaICMS, i.valorComissionado, i.pedido.aliquotaComissao) from ItemPedido i ");
 		select.append("where i.pedido.tipoPedido = :tipoPedido and ");
 		select.append("i.pedido.dataEnvio >= :dataInicio and ");
 		select.append("i.pedido.dataEnvio <= :dataFim and ");
@@ -2278,12 +2266,9 @@ public class PedidoServiceImpl implements PedidoService {
 		if (idItemPedido == null) {
 			return null;
 		}
-		return QueryUtil
-				.gerarRegistroUnico(
-						this.entityManager
-								.createQuery(
-										"select new Usuario(v.id, v.nome, v.sobrenome) from ItemPedido i inner join i.pedido.proprietario v where i.id = :idItemPedido ")
-								.setParameter("idItemPedido", idItemPedido), Usuario.class, null);
+		return QueryUtil.gerarRegistroUnico(this.entityManager.createQuery(
+				"select new Usuario(v.id, v.nome, v.sobrenome) from ItemPedido i inner join i.pedido.proprietario v where i.id = :idItemPedido ")
+				.setParameter("idItemPedido", idItemPedido), Usuario.class, null);
 	}
 
 	private IndicadorCliente recalcularIndiceQuantidadeOrcamento(Integer idCliente) {
@@ -2427,10 +2412,11 @@ public class PedidoServiceImpl implements PedidoService {
 			return pedido;
 		} catch (NonUniqueResultException e) {
 			throw new BusinessException(
-					"Não foi possivel remover o item pois foi encontrato mais de um item para o codigo " + idItemPedido);
+					"Não foi possivel remover o item pois foi encontrato mais de um item para o codigo "
+							+ idItemPedido);
 		} catch (NoResultException e) {
-			throw new BusinessException("Não foi possivel remover o item pois não existe item com o codigo "
-					+ idItemPedido);
+			throw new BusinessException(
+					"Não foi possivel remover o item pois não existe item com o codigo " + idItemPedido);
 		} catch (Exception e) {
 			Integer seq = itemPedidoDAO.pesquisarSequencialItemPedido(idItemPedido);
 			throw new IllegalStateException("Falha na remocao do item No. " + seq + " do pedido No. " + pedido.getId(),

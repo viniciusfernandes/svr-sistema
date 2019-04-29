@@ -15,7 +15,7 @@ public class ItemReservadoDAO extends GenericDAO<ItemReservado> {
 
 	@SuppressWarnings("unchecked")
 	public List<ItemReservado> pesquisarItemReservadoByIdItemEstoque(Integer idItemEstoque) {
-		return entityManager
+		return em
 				.createQuery(
 						"select new ItemReservado(i.id, i.itemPedido.id, i.itemEstoque.id) from ItemReservado i where i.itemEstoque.id =:idItemEstoque")
 				.setParameter("idItemEstoque", idItemEstoque).getResultList();
@@ -23,7 +23,7 @@ public class ItemReservadoDAO extends GenericDAO<ItemReservado> {
 
 	@SuppressWarnings("unchecked")
 	public List<ItemReservado> pesquisarItemReservadoByIdItemPedido(Integer idItemPedido) {
-		return entityManager
+		return em
 				.createQuery(
 						"select new ItemReservado(i.id, i.itemPedido.id, i.itemEstoque.id) from ItemReservado i where i.itemPedido.id =:idItemPedido")
 				.setParameter("idItemPedido", idItemPedido).getResultList();
@@ -31,7 +31,7 @@ public class ItemReservadoDAO extends GenericDAO<ItemReservado> {
 
 	@SuppressWarnings("unchecked")
 	public List<ItemReservado> pesquisarItemReservadoByIdPedido(Integer idPedido) {
-		return entityManager
+		return em
 				.createQuery(
 						"select new ItemReservado(i.id, i.itemPedido.id, i.itemPedido.quantidade, i.itemEstoque.id, i.itemEstoque.quantidade) from ItemReservado i where i.itemPedido.pedido.id = :idPedido")
 				.setParameter("idPedido", idPedido).getResultList();
@@ -40,7 +40,7 @@ public class ItemReservadoDAO extends GenericDAO<ItemReservado> {
 	public Integer[] pesquisarQuantidadeEstoqueByIdItemPedido(Integer idItemPedido) {
 		Object[] o = QueryUtil
 				.gerarRegistroUnico(
-						entityManager
+						em
 								.createQuery(
 										"select i.itemEstoque.id, i.itemEstoque.quantidade from ItemReservado i where i.itemPedido.id = :idItemPedido")
 								.setParameter("idItemPedido", idItemPedido), Object[].class, null);
@@ -49,13 +49,13 @@ public class ItemReservadoDAO extends GenericDAO<ItemReservado> {
 	}
 
 	public Long pesquisarTotalItemPedidoReservado(Integer idPedido) {
-		return (Long) entityManager
+		return (Long) em
 				.createQuery("select count(i.id) from ItemReservado i where i.itemPedido.pedido.id = :idPedido")
 				.setParameter("idPedido", idPedido).getSingleResult();
 	}
 
 	public void removerByIdItemPedido(Integer idItemPedido) {
-		entityManager.createQuery("delete from ItemReservado i where i.itemPedido.id =:idItemPedido")
+		em.createQuery("delete from ItemReservado i where i.itemPedido.id =:idItemPedido")
 				.setParameter("idItemPedido", idItemPedido).executeUpdate();
 	}
 	

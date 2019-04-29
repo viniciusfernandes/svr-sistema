@@ -15,30 +15,30 @@ public class EnderecoDAO extends GenericDAO<Endereco> {
 	}
 
 	public void inserirUF(UF uf) {
-		entityManager.merge(uf);
+		em.merge(uf);
 	}
 	public boolean isUFExistente(String sigla, Integer idPais) {
 		return QueryUtil.gerarRegistroUnico(
-				this.entityManager.createQuery("select u from UF u where u.sigla = :sigla and u.pais.id = :idPais ")
+				this.em.createQuery("select u from UF u where u.sigla = :sigla and u.pais.id = :idPais ")
 						.setParameter("sigla", sigla).setParameter("idPais", idPais), UF.class, null) != null;
 
 	}
 
 	public Endereco pesquisarByCep(String cep) {
 		return QueryUtil.gerarRegistroUnico(
-				this.entityManager.createQuery("select e from Endereco e where e.cep =:cep ").setParameter("cep", cep),
+				this.em.createQuery("select e from Endereco e where e.cep =:cep ").setParameter("cep", cep),
 				Endereco.class, null);
 	}
 
 	public List<String> pesquisarCEPExistente(List<String> listaCep) {
-		return entityManager.createQuery("select e.cep from Endereco e where e.cep in(:listaCep)", String.class)
+		return em.createQuery("select e.cep from Endereco e where e.cep in(:listaCep)", String.class)
 				.setParameter("listaCep", listaCep).getResultList();
 
 	}
 
 	@SuppressWarnings("unchecked")
 	public Integer pesquisarIdBairroByDescricao(String descricao, Integer idCidade) {
-		List<Integer> lista = this.entityManager
+		List<Integer> lista = this.em
 				.createQuery("select b.id from Bairro b where b.cidade.id = :idCidade and b.descricao = :descricao ")
 				.setParameter("descricao", descricao).setParameter("idCidade", idCidade).getResultList();
 		return lista.isEmpty() ? null : lista.get(0);
@@ -46,7 +46,7 @@ public class EnderecoDAO extends GenericDAO<Endereco> {
 
 	@SuppressWarnings("unchecked")
 	public Integer pesquisarIdCidadeByDescricao(String descricao, Integer idPais) {
-		List<Integer> lista = this.entityManager
+		List<Integer> lista = this.em
 				.createQuery("select c.id from Cidade c where c.pais.id = :idPais and c.descricao = :descricao ")
 				.setParameter("descricao", descricao).setParameter("idPais", idPais).getResultList();
 		return lista.isEmpty() ? null : lista.get(0);
@@ -55,7 +55,7 @@ public class EnderecoDAO extends GenericDAO<Endereco> {
 
 	@SuppressWarnings("unchecked")
 	public Integer pesquisarIdPaisByDescricao(String descricao) {
-		List<Integer> lista = this.entityManager.createQuery("select p.id from Pais p where p.descricao = :descricao")
+		List<Integer> lista = this.em.createQuery("select p.id from Pais p where p.descricao = :descricao")
 				.setParameter("descricao", descricao).getResultList();
 		return lista.isEmpty() ? null : lista.get(0);
 

@@ -15,13 +15,13 @@ public class TransportadoraDAO extends GenericDAO<Transportadora> {
 
 	public Transportadora pesquisarByCNPJ(String cnpj) {
 		return QueryUtil.gerarRegistroUnico(
-				entityManager
+				em
 						.createQuery("select t from Transportadora t join fetch t.logradouro where t.cnpj = :cnpj")
 						.setParameter("cnpj", cnpj), Transportadora.class, null);
 	}
 
 	public List<Transportadora> pesquisarByNomeFantasia(String nomeFantasia) {
-		return entityManager
+		return em
 				.createQuery(
 						"select new Transportadora(c.id, c.nomeFantasia) from Transportadora c where c.nomeFantasia like :nomeFantasia order by c.nomeFantasia asc ",
 						Transportadora.class).setParameter("nomeFantasia", "%" + nomeFantasia + "%").getResultList();
@@ -29,7 +29,7 @@ public class TransportadoraDAO extends GenericDAO<Transportadora> {
 
 	public Transportadora pesquisarTransportadoraLogradouroById(Integer idTransportadora) {
 		return QueryUtil.gerarRegistroUnico(
-				entityManager.createQuery(
+				em.createQuery(
 						"select t from Transportadora t left join fetch t.logradouro where t.id =:idTransportadora ")
 						.setParameter("idTransportadora", idTransportadora), Transportadora.class, null);
 	}

@@ -15,7 +15,7 @@ public class MaterialDAO extends GenericDAO<Material> {
 	}
 
 	public void desativar(Integer id) {
-		Query query = this.entityManager.createQuery("update Material r set r.ativo = false where r.id = :id");
+		Query query = this.em.createQuery("update Material r set r.ativo = false where r.id = :id");
 		query.setParameter("id", id);
 		query.executeUpdate();
 	}
@@ -23,7 +23,7 @@ public class MaterialDAO extends GenericDAO<Material> {
 	public boolean isMaterialAssociadoRepresentada(Integer idMaterial, Integer idRepresentada) {
 		return QueryUtil
 				.gerarRegistroUnico(
-						this.entityManager
+						this.em
 								.createQuery(
 										"select m.id from Material m inner join m.listaRepresentada r where  m.id = :idMaterial and r.id = :idRepresentada")
 								.setParameter("idMaterial", idMaterial).setParameter("idRepresentada", idRepresentada),
@@ -32,7 +32,7 @@ public class MaterialDAO extends GenericDAO<Material> {
 
 	public boolean isMaterialImportado(Integer idMaterial) {
 		return QueryUtil.gerarRegistroUnico(
-				this.entityManager.createQuery("select m.importado from Material m where m.id = :idMaterial")
+				this.em.createQuery("select m.importado from Material m where m.id = :idMaterial")
 						.setParameter("idMaterial", idMaterial), Boolean.class, false);
 	}
 
@@ -64,7 +64,7 @@ public class MaterialDAO extends GenericDAO<Material> {
 		}
 
 		select.append("m.sigla like :sigla order by m.sigla ");
-		Query query = this.entityManager.createQuery(select.toString());
+		Query query = this.em.createQuery(select.toString());
 		query.setParameter("sigla", "%" + sigla + "%");
 
 		if (idRepresentada != null) {
@@ -78,7 +78,7 @@ public class MaterialDAO extends GenericDAO<Material> {
 	}
 
 	public Material pesquisarBySiglaIdentica(String sigla) {
-		return QueryUtil.gerarRegistroUnico(entityManager.createQuery("select m from Material m where m.sigla =:sigla")
+		return QueryUtil.gerarRegistroUnico(em.createQuery("select m from Material m where m.sigla =:sigla")
 				.setParameter("sigla", sigla), Material.class, null);
 	}
 }

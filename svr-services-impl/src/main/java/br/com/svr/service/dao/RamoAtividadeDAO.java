@@ -13,7 +13,7 @@ public class RamoAtividadeDAO extends GenericDAO<RamoAtividade> {
 
 	public RamoAtividade pesquisarRamoAtividadePadrao() {
 		return QueryUtil.gerarRegistroUnico(
-				entityManager.createQuery("select r from RamoAtividade r where r.sigla = 'NDEFINIDO'"), RamoAtividade.class,
+				em.createQuery("select r from RamoAtividade r where r.sigla = 'NDEFINIDO'"), RamoAtividade.class,
 				null);
 	}
 }

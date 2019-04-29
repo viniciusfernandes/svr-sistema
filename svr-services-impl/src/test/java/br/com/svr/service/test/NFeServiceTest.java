@@ -250,43 +250,43 @@ public class NFeServiceTest extends AbstractTest {
 
 	@Test
 	public void testRelatorioFaturamentoPedidoRevendaEnviado() {
-		Pedido p = gPedido.gerarPedidoRevenda();
+		Pedido revenda = gPedido.gerarPedidoRevenda();
 		ItemPedido i = null;
 		try {
-			i = gPedido.gerarItemPedido(p.getId());
+			i = gPedido.gerarItemPedido(revenda.getId());
 		} catch (BusinessException e) {
 			printMensagens(e);
 		}
+
+		// Editando os valor de tipo de venda do item do pedido.
 		i.setTipoVenda(TipoVenda.PECA);
 		i.setPrecoVenda(100d);
 		i.setQuantidade(20);
 		i.setAliquotaIPI(0d);
 
-		p.setValorFrete(200d);
-		p.setFinalidadePedido(TipoFinalidadePedido.INDUSTRIALIZACAO);
+		revenda.setValorFrete(200d);
+		revenda.setFinalidadePedido(TipoFinalidadePedido.INDUSTRIALIZACAO);
 		try {
-			pedidoService.inserirPedido(p);
-			pedidoService.inserirItemPedido(p.getId(), i);
-			pedidoService.enviarPedido(p.getId(), new AnexoEmail(new byte[] {}));
+			pedidoService.inserirItemPedido(revenda.getId(), i);
+			pedidoService.enviarPedido(revenda.getId(), new AnexoEmail(new byte[] {}));
 		} catch (BusinessException e) {
 			printMensagens(e);
 		}
-		p = pedidoService.pesquisarPedidoById(p.getId());
-		i = pedidoService.pesquisarItemPedidoById(i.getId());
+		revenda = pedidoService.pesquisarPedidoById(revenda.getId());
 
-		Double valPed = 2200d;
-		p = recarregarEntidade(Pedido.class, p.getId());
-		assertEquals("O valor total do pedido nao confere", valPed, (Double) p.getValorPedido());
+		final Double valPed = 2200d;
+		assertEquals("O valor total do pedido nao confere", valPed, (Double) revenda.getValorPedido());
 
-		NFe nfe = gerarNFeItensTodosItensPedido(p.getId());
+		NFe nfe = gerarNFeItensTodosItensPedido(revenda.getId());
 		try {
-			nFeService.emitirNFeSaida(nfe, p.getId());
+			nFeService.emitirNFeSaida(nfe, revenda.getId());
 		} catch (BusinessException e) {
 			printMensagens(e);
 		}
 		List<NFePedido> lNfe = null;
 		try {
-			lNfe = nFeService.pesquisarNFePedidoSaidaEmitidaByPeriodo(new Periodo(p.getDataEnvio(), p.getDataEnvio()));
+			lNfe = nFeService.pesquisarNFePedidoSaidaEmitidaByPeriodo(
+					new Periodo(revenda.getDataEnvio(), revenda.getDataEnvio()));
 		} catch (InformacaoInvalidaException e) {
 			printMensagens(e);
 		}

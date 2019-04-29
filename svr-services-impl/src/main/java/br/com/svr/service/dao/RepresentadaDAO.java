@@ -20,7 +20,7 @@ public class RepresentadaDAO extends GenericDAO<Representada> {
 
 	public double pesquisarAliquotaICMSRevendedor() {
 		Double icms = QueryUtil.gerarRegistroUnico(
-				entityManager.createQuery(
+				em.createQuery(
 						"select r.aliquotaICMS from Representada r where r.tipoRelacionamento = :tipoRelacionamento")
 						.setParameter("tipoRelacionamento", TipoRelacionamento.REVENDA), Double.class, null);
 		return icms == null ? 0 : icms;
@@ -36,14 +36,14 @@ public class RepresentadaDAO extends GenericDAO<Representada> {
 
 	public LogradouroRepresentada pesquisarLogradorouro(Integer id) {
 		return QueryUtil.gerarRegistroUnico(
-				entityManager.createQuery(
+				em.createQuery(
 						"select t.logradouro from Representada t INNER JOIN t.logradouro where t.id = :id")
 						.setParameter("id", id), LogradouroRepresentada.class, null);
 	}
 
 	public String pesquisarNomeFantasiaById(Integer idRepresentada) {
 		return QueryUtil.gerarRegistroUnico(
-				entityManager.createQuery("SELECT r.nomeFantasia FROM Representada r where r.id = :idRepresentada")
+				em.createQuery("SELECT r.nomeFantasia FROM Representada r where r.id = :idRepresentada")
 						.setParameter("idRepresentada", idRepresentada), String.class, null);
 	}
 
@@ -66,7 +66,7 @@ public class RepresentadaDAO extends GenericDAO<Representada> {
 
 		select.append("order by r.nomeFantasia ");
 
-		TypedQuery<Representada> query = entityManager.createQuery(select.toString(), Representada.class).setParameter(
+		TypedQuery<Representada> query = em.createQuery(select.toString(), Representada.class).setParameter(
 				"ativo", ativo);
 		if (tipos != null) {
 			query.setParameter("tipos", Arrays.asList(tipos));
@@ -95,7 +95,7 @@ public class RepresentadaDAO extends GenericDAO<Representada> {
 
 		select.append("order by r.nomeFantasia ");
 
-		Query query = this.entityManager.createQuery(select.toString());
+		Query query = this.em.createQuery(select.toString());
 		if (ativo != null) {
 			query.setParameter("ativo", ativo);
 		}
@@ -108,7 +108,7 @@ public class RepresentadaDAO extends GenericDAO<Representada> {
 	public Representada pesquisarRevendedor() {
 		return QueryUtil
 				.gerarRegistroUnico(
-						entityManager
+						em
 								.createQuery(
 										"select new Representada(r.id, r.nomeFantasia) from Representada r where r.tipoRelacionamento = :tipoRelacionamento")
 								.setParameter("tipoRelacionamento", TipoRelacionamento.REVENDA), Representada.class,
@@ -116,7 +116,7 @@ public class RepresentadaDAO extends GenericDAO<Representada> {
 	}
 
 	public TipoApresentacaoIPI pesquisarTipoApresentacaoIPI(Integer idRepresentada) {
-		Query query = this.entityManager.createQuery(
+		Query query = this.em.createQuery(
 				"select r.tipoApresentacaoIPI from Representada r where r.id = :idRepresentada").setParameter(
 				"idRepresentada", idRepresentada);
 		return QueryUtil.gerarRegistroUnico(query, TipoApresentacaoIPI.class, TipoApresentacaoIPI.NUNCA);
@@ -124,7 +124,7 @@ public class RepresentadaDAO extends GenericDAO<Representada> {
 
 	public TipoRelacionamento pesquisarTipoRelacionamento(Integer idRepresentada) {
 		return QueryUtil.gerarRegistroUnico(
-				entityManager.createQuery(
+				em.createQuery(
 						"SELECT r.tipoRelacionamento FROM Representada r where r.id = :idRepresentada").setParameter(
 						"idRepresentada", idRepresentada), TipoRelacionamento.class, null);
 	}

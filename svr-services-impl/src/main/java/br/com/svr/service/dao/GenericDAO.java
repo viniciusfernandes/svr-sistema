@@ -6,14 +6,14 @@ import javax.persistence.Query;
 import br.com.svr.service.impl.util.QueryUtil;
 
 public class GenericDAO<T> {
-	protected final EntityManager entityManager;
+	protected final EntityManager em;
 
 	public GenericDAO(EntityManager entityManager) {
-		this.entityManager = entityManager;
+		this.em = entityManager;
 	}
 
 	public T alterar(T t) {
-		return entityManager.merge(t);
+		return em.merge(t);
 	}
 
 	public void alterarPropriedade(Class<T> classe, Integer id, String nomePropriedade, Object valorPropriedade) {
@@ -24,18 +24,19 @@ public class GenericDAO<T> {
 		select.append("update ").append(classe.getSimpleName()).append(" e ");
 		select.append(" set e.").append(nomePropriedade).append(" = :").append(nomePropriedade)
 				.append(" where e.id = :id");
-		entityManager.createQuery(select.toString()).setParameter(nomePropriedade, valorPropriedade)
+		em.createQuery(select.toString()).setParameter(nomePropriedade, valorPropriedade)
 				.setParameter("id", id).executeUpdate();
 	}
 
 	public T flush(T t) {
-		t = entityManager.merge(t);
-		entityManager.flush();
+		t = em.merge(t);
+		em.flush();
 		return t;
 	}
 
 	public T inserir(T t) {
-		entityManager.persist(t);
+		em.persist(t);
+		em.flush();
 		return t;
 	}
 
@@ -64,7 +65,7 @@ public class GenericDAO<T> {
 			valorAtributo = valorAtributo.toString().trim();
 		}
 
-		Query query = this.entityManager.createQuery(select.toString()).setParameter(nomeAtributo, valorAtributo);
+		Query query = this.em.createQuery(select.toString()).setParameter(nomeAtributo, valorAtributo);
 		if (idInclusoNoFiltro) {
 			query.setParameter("valorIdEntidade", valorIdEntidade);
 		}
@@ -80,7 +81,7 @@ public class GenericDAO<T> {
 		StringBuilder select = new StringBuilder();
 		select.append("select e from ").append(classe.getSimpleName());
 		select.append(" e where e.id = :id");
-		return QueryUtil.gerarRegistroUnico(entityManager.createQuery(select.toString()).setParameter("id", id),
+		return QueryUtil.gerarRegistroUnico(em.createQuery(select.toString()).setParameter("id", id),
 				classe, null);
 	}
 
@@ -88,12 +89,12 @@ public class GenericDAO<T> {
 		StringBuilder select = new StringBuilder();
 		select.append("select ").append("e.").append(nomeCampo).append(" from ").append(classe.getSimpleName());
 		select.append(" e where e.id = :id");
-		return QueryUtil.gerarRegistroUnico(entityManager.createQuery(select.toString()).setParameter("id", id),
+		return QueryUtil.gerarRegistroUnico(em.createQuery(select.toString()).setParameter("id", id),
 				retorno, null);
 	}
 
 	public T remover(T t) {
-		entityManager.remove(entityManager.merge(t));
+		em.remove(em.merge(t));
 		return t;
 	}
 }

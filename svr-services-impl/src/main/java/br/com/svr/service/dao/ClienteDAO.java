@@ -25,10 +25,10 @@ public class ClienteDAO extends GenericDAO<Cliente> {
 	public boolean isEmailExistente(Integer idCliente, String email) {
 		Query query = null;
 		if (idCliente == null) {
-			query = this.entityManager.createQuery("select count(r.id) from Cliente r where r.email = :email ");
+			query = this.em.createQuery("select count(r.id) from Cliente r where r.email = :email ");
 			query.setParameter("email", email);
 		} else {
-			query = this.entityManager
+			query = this.em
 					.createQuery("select count(r.id) from Cliente  r where r.id != :id AND r.email = :email ");
 			query.setParameter("email", email);
 			query.setParameter("id", idCliente);
@@ -49,7 +49,7 @@ public class ClienteDAO extends GenericDAO<Cliente> {
 	public List<Cliente> pesquisarByNomeFantasia(String nomeFantasia) {
 		StringBuilder select = new StringBuilder().append("select c from Cliente c ").append(
 				"where c.nomeFantasia like :nomeFantasia");
-		return this.entityManager.createQuery(select.toString()).setParameter("nomeFantasia", nomeFantasia)
+		return this.em.createQuery(select.toString()).setParameter("nomeFantasia", nomeFantasia)
 				.getResultList();
 
 	}
@@ -57,7 +57,7 @@ public class ClienteDAO extends GenericDAO<Cliente> {
 	public Cliente pesquisarClienteResumidoByCnpj(String cnpj) {
 		return QueryUtil
 				.gerarRegistroUnico(
-						entityManager
+						em
 								.createQuery(
 										"select new Cliente(c.id, c.nomeFantasia, c.razaoSocial, c.cnpj, c.cpf, c.inscricaoEstadual, c.email) from Cliente c where c.cnpj = :cnpj")
 								.setParameter("cnpj", cnpj), Cliente.class, null);
@@ -66,7 +66,7 @@ public class ClienteDAO extends GenericDAO<Cliente> {
 	public Cliente pesquisarClienteResumidoById(Integer idCliente) {
 		return QueryUtil
 				.gerarRegistroUnico(
-						entityManager
+						em
 								.createQuery(
 										"select new Cliente(c.id, c.nomeFantasia, c.razaoSocial) from Cliente c where c.id = :idCliente")
 								.setParameter("idCliente", idCliente), Cliente.class, null);
@@ -75,14 +75,14 @@ public class ClienteDAO extends GenericDAO<Cliente> {
 	public Cliente pesquisarClienteResumidoDocumentoById(Integer idCliente) {
 		return QueryUtil
 				.gerarRegistroUnico(
-						entityManager
+						em
 								.createQuery(
 										"select new Cliente(c.id, c.nomeFantasia, c.razaoSocial, c.cnpj, c.cpf, c.inscricaoEstadual, c.email) from Cliente c where c.id = :idCliente")
 								.setParameter("idCliente", idCliente), Cliente.class, null);
 	}
 
 	public List<ContatoCliente> pesquisarContato(Integer idCliente) {
-		return entityManager
+		return em
 				.createQuery("select l from Cliente c inner join c.listaContato l where c.id = :idCliente ",
 						ContatoCliente.class).setParameter("idCliente", idCliente).getResultList();
 	}
@@ -90,7 +90,7 @@ public class ClienteDAO extends GenericDAO<Cliente> {
 	public ContatoCliente pesquisarContatoByIdContato(Integer idContato) {
 		return QueryUtil
 				.gerarRegistroUnico(
-						entityManager
+						em
 								.createQuery(
 										"select new ContatoCliente (cc.ddd, cc.dddSecundario, cc.ddi, cc.departamento, cc.email, cc.fax, cc.cliente.id, cc.nome, cc.ramal, cc.telefone, cc.telefoneSecundario) from ContatoCliente cc where cc.id = :idContato")
 								.setParameter("idContato", idContato), ContatoCliente.class, null);
@@ -99,14 +99,14 @@ public class ClienteDAO extends GenericDAO<Cliente> {
 	public ContatoCliente pesquisarContatoPrincipalResumidoByIdCliente(Integer idCliente) {
 		return QueryUtil
 				.gerarRegistroUnico(
-						entityManager
+						em
 								.createQuery(
 										"select new ContatoCliente(c.ddd, c.ddi, c.email, c.nome, c.telefone) from ContatoCliente c where  c.id = (select max(c1.id) from ContatoCliente c1 where c1.cliente.id = :idCliente )")
 								.setParameter("idCliente", idCliente), ContatoCliente.class, null);
 	}
 
 	public List<ContatoCliente> pesquisarContatoResumidoByIdCliente(Integer idCliente) {
-		return entityManager
+		return em
 				.createQuery(
 						"select new ContatoCliente (cc.id, cc.nome) from ContatoCliente cc where cc.cliente.id = :idCliente",
 						ContatoCliente.class).setParameter("idCliente", idCliente).getResultList();
@@ -114,20 +114,20 @@ public class ClienteDAO extends GenericDAO<Cliente> {
 
 	public Integer pesquisarIdVendedorByIdCliente(Integer idCliente) {
 		return QueryUtil.gerarRegistroUnico(
-				entityManager.createQuery("select c.vendedor.id from Cliente c where c.id =:id ").setParameter("id",
+				em.createQuery("select c.vendedor.id from Cliente c where c.id =:id ").setParameter("id",
 						idCliente), Integer.class, null);
 	}
 
 	@SuppressWarnings("unchecked")
 	public List<LogradouroCliente> pesquisarLogradouroById(Integer idCliente) {
-		return entityManager.createQuery("select l from LogradouroCliente l where l.cliente.id = :idCliente")
+		return em.createQuery("select l from LogradouroCliente l where l.cliente.id = :idCliente")
 				.setParameter("idCliente", idCliente).getResultList();
 	}
 
 	public List<LogradouroCliente> pesquisarLogradouroFaturamentoById(Integer idCliente) {
 		StringBuilder select = new StringBuilder().append("select l from Cliente c ").append(
 				"inner join c.listaLogradouro l where c.id = :idCliente and l.tipoLogradouro = :tipoLogradouro ");
-		return entityManager.createQuery(select.toString(), LogradouroCliente.class)
+		return em.createQuery(select.toString(), LogradouroCliente.class)
 				.setParameter("idCliente", idCliente).setParameter("tipoLogradouro", TipoLogradouro.FATURAMENTO)
 				.getResultList();
 	}
@@ -139,14 +139,14 @@ public class ClienteDAO extends GenericDAO<Cliente> {
 	public Cliente pesquisarNomeRevendedor() {
 		return QueryUtil
 				.gerarRegistroUnico(
-						entityManager
+						em
 								.createQuery(
 										"select new Cliente(c.id, c.nomeFantasia, c.razaoSocial) from Cliente c where c.tipoCliente = :tipoCliente")
 								.setParameter("tipoCliente", TipoCliente.REVENDEDOR), Cliente.class, null);
 	}
 
 	public void removerLogradouroByIdCliente(Integer idCliente) {
-		entityManager.createQuery("delete from LogradouroCliente l where l.cliente.id = :idCliente")
+		em.createQuery("delete from LogradouroCliente l where l.cliente.id = :idCliente")
 				.setParameter("idCliente", idCliente).executeUpdate();
 	}
 }

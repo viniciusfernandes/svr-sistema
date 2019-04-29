@@ -20,7 +20,7 @@ public class NegociacaoDAO extends GenericDAO<Negociacao> {
 	}
 
 	public void alterarCategoria(Integer idNegociacao, CategoriaNegociacao categoriaNegociacao) {
-		entityManager
+		em
 				.createQuery(
 						"update Negociacao n set n.categoriaNegociacao =:categoriaNegociacao where n.id=:idNegociacao")
 				.setParameter("categoriaNegociacao", categoriaNegociacao).setParameter("idNegociacao", idNegociacao)
@@ -29,7 +29,7 @@ public class NegociacaoDAO extends GenericDAO<Negociacao> {
 
 	public void alterarIndiceConversaoValorByIdCliente(Integer idCliente, Double indiceQuantidade, Double indiceValor,
 			SituacaoNegociacao situacaoNegociacao) {
-		entityManager
+		em
 				.createQuery(
 						"update Negociacao n set n.indiceConversaoQuantidade =:indiceQuantidade, n.indiceConversaoValor =:indiceValor where n.idCliente =:idCliente and n.situacaoNegociacao=:situacaoNegociacao")
 				.setParameter("idCliente", idCliente).setParameter("indiceQuantidade", indiceQuantidade)
@@ -38,7 +38,7 @@ public class NegociacaoDAO extends GenericDAO<Negociacao> {
 	}
 
 	public void alterarSituacaoNegociacao(Integer idNegociacao, SituacaoNegociacao situacaoNegociacao) {
-		entityManager
+		em
 				.createQuery(
 						"update Negociacao n set n.situacaoNegociacao =:situacaoNegociacao where n.id=:idNegociacao")
 				.setParameter("situacaoNegociacao", situacaoNegociacao).setParameter("idNegociacao", idNegociacao)
@@ -46,14 +46,14 @@ public class NegociacaoDAO extends GenericDAO<Negociacao> {
 	}
 
 	public void alterarTipoNaoFechamento(Integer idNegociacao, TipoNaoFechamento tipoNaoFechamento) {
-		entityManager
+		em
 				.createQuery("update Negociacao n set n.tipoNaoFechamento =:tipoNaoFechamento where n.id=:idNegociacao")
 				.setParameter("tipoNaoFechamento", tipoNaoFechamento).setParameter("idNegociacao", idNegociacao)
 				.executeUpdate();
 	}
 
 	public double calcularValorCategoriaNegociacaoAberta(Integer idVendedor, CategoriaNegociacao categoria) {
-		Object v = entityManager
+		Object v = em
 				.createQuery(
 						"select sum(n.orcamento.valorPedidoIPI) from Negociacao n where n.idVendedor = :idVendedor and n.categoriaNegociacao =:categoria and n.situacaoNegociacao =:situacaoNegociacao")
 				.setParameter("idVendedor", idVendedor).setParameter("categoria", categoria)
@@ -62,7 +62,7 @@ public class NegociacaoDAO extends GenericDAO<Negociacao> {
 	}
 
 	public void inserirObservacao(Integer idNegociacao, String observacao) {
-		entityManager.createQuery("update Negociacao n set n.observacao =:observacao where n.id=:idNegociacao")
+		em.createQuery("update Negociacao n set n.observacao =:observacao where n.id=:idNegociacao")
 				.setParameter("observacao", observacao).setParameter("idNegociacao", idNegociacao).executeUpdate();
 	}
 
@@ -72,26 +72,26 @@ public class NegociacaoDAO extends GenericDAO<Negociacao> {
 
 	public Integer pesquisarIdNegociacaoByIdOrcamento(Integer idOrcamento) {
 		return QueryUtil.gerarRegistroUnico(
-				entityManager.createQuery("select n.id from Negociacao n where n.orcamento.id =:idOrcamento")
+				em.createQuery("select n.id from Negociacao n where n.orcamento.id =:idOrcamento")
 						.setParameter("idOrcamento", idOrcamento), Integer.class, null);
 	}
 
 	public Integer pesquisarIdOrcamentoByIdNegociacao(Integer idNegociacao) {
 		return QueryUtil.gerarRegistroUnico(
-				entityManager.createQuery("select n.orcamento.id from Negociacao n where n.id =:idNegociacao")
+				em.createQuery("select n.orcamento.id from Negociacao n where n.id =:idNegociacao")
 						.setParameter("idNegociacao", idNegociacao), Integer.class, null);
 	}
 
 	public IndicadorCliente pesquisarIndicadorByIdCliente(Integer idCliente) {
 		return QueryUtil.gerarRegistroUnico(
-				entityManager.createQuery("select i from IndicadorCliente i where i.idCliente =:idCliente")
+				em.createQuery("select i from IndicadorCliente i where i.idCliente =:idCliente")
 						.setParameter("idCliente", idCliente), IndicadorCliente.class, null);
 	}
 
 	public double[] pesquisarIndiceConversaoValorByIdCliente(Integer idCliente) {
 		Object[] o = null;
 		try {
-			o = entityManager
+			o = em
 					.createQuery(
 							"select i.indiceConversaoQuantidade, i.indiceConversaoValor from IndicadorCliente i where i.idCliente =:idCliente",
 							Object[].class).setParameter("idCliente", idCliente).getSingleResult();
@@ -104,7 +104,7 @@ public class NegociacaoDAO extends GenericDAO<Negociacao> {
 	}
 
 	public List<Negociacao> pesquisarNegociacaoAbertaByIdVendedor(Integer idVendedor) {
-		return entityManager
+		return em
 				.createQuery(
 						"select new Negociacao(n.categoriaNegociacao, n.id, n.orcamento.id, n.indiceConversaoQuantidade, n.indiceConversaoValor, n.nomeCliente, n.nomeContato, n.telefoneContato, n.orcamento.valorPedidoIPI) from Negociacao n where n.idVendedor = :idVendedor and n.situacaoNegociacao =:situacaoNegociacao",
 						Negociacao.class).setParameter("idVendedor", idVendedor)
@@ -113,19 +113,19 @@ public class NegociacaoDAO extends GenericDAO<Negociacao> {
 
 	public Negociacao pesquisarNegociacaoByIdOrcamento(Integer idOrcamento) {
 		return QueryUtil.gerarRegistroUnico(
-				entityManager.createQuery("select n from Negociacao n where n.orcamento.id =:idOrcamento")
+				em.createQuery("select n from Negociacao n where n.orcamento.id =:idOrcamento")
 						.setParameter("idOrcamento", idOrcamento), Negociacao.class, null);
 	}
 
 	public String pesquisarObservacao(Integer idNegociacao) {
 		return QueryUtil.gerarRegistroUnico(
-				entityManager.createQuery("select n.observacao from Negociacao n where n.id=:idNegociacao")
+				em.createQuery("select n.observacao from Negociacao n where n.id=:idNegociacao")
 						.setParameter("idNegociacao", idNegociacao), String.class, null);
 
 	}
 
 	public void removerNegociacaoByIdOrcamento(Integer idOrcamento) {
-		entityManager.createQuery("delete Negociacao n where n.orcamento.id = :idOrcamento")
+		em.createQuery("delete Negociacao n where n.orcamento.id = :idOrcamento")
 				.setParameter("idOrcamento", idOrcamento).executeUpdate();
 	}
 

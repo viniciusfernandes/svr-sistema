@@ -19,7 +19,7 @@ public class NFeItemFracionadoDAO extends GenericDAO<NFeItemFracionado> {
 			return;
 		}
 		for (Integer[] q : listaQtdFracionada) {
-			entityManager
+			em
 					.createQuery(
 							"update NFeItemFracionado i set i.quantidadeFracionada =:qFrac where i.numeroItem =:numItem and i.numeroNFe =:numeroNFe")
 					.setParameter("qFrac", q[1]).setParameter("numItem", q[0]).setParameter("numeroNFe", numeroNFe)
@@ -31,7 +31,7 @@ public class NFeItemFracionadoDAO extends GenericDAO<NFeItemFracionado> {
 	public Integer pesquisarIdItemFracionado(Integer idItemPedido, Integer numeroNFe) {
 		return QueryUtil
 				.gerarRegistroUnico(
-						entityManager
+						em
 								.createQuery(
 										"select i.id from NFeItemFracionado i where i.idItemPedido =:idItemPedido and i.numeroNFe = :numeroNFe")
 								.setParameter("idItemPedido", idItemPedido).setParameter("numeroNFe", numeroNFe),
@@ -39,17 +39,17 @@ public class NFeItemFracionadoDAO extends GenericDAO<NFeItemFracionado> {
 	}
 
 	public List<NFeItemFracionado> pesquisarItemFracionado() {
-		return entityManager.createQuery("select i from NFeItemFracionado i", NFeItemFracionado.class).getResultList();
+		return em.createQuery("select i from NFeItemFracionado i", NFeItemFracionado.class).getResultList();
 	}
 
 	public List<NFeItemFracionado> pesquisarItemFracionadoByNumeroNFe(Integer numeroNFe) {
-		return entityManager
+		return em
 				.createQuery("select i from NFeItemFracionado i where i.numeroNFe = :numeroNFe",
 						NFeItemFracionado.class).setParameter("numeroNFe", numeroNFe).getResultList();
 	}
 
 	public List<NFeItemFracionado> pesquisarNFeItemFracionadoQuantidades(Integer numeroNFe) {
-		return entityManager
+		return em
 				.createQuery(
 						"select new NFeItemFracionado(n.idPedido, n.numeroItem, n.numeroNFe, n.quantidade, n.quantidadeFracionada) from NFeItemFracionado n where n.numeroNFe =:numeroNFe",
 						NFeItemFracionado.class).setParameter("numeroNFe", numeroNFe).getResultList();
@@ -57,13 +57,13 @@ public class NFeItemFracionadoDAO extends GenericDAO<NFeItemFracionado> {
 
 	public Integer pesquisarQuantidadeFracionada(Integer idItemPedido) {
 		return QueryUtil.gerarRegistroUnico(
-				entityManager.createQuery(
+				em.createQuery(
 						"select i.quantidadeFracionada from NFeItemFracionado i where i.idItemPedido =:idItemPedido")
 						.setParameter("idItemPedido", idItemPedido), Integer.class, 0);
 	}
 
 	public List<Integer[]> pesquisarQuantidadeFracionadaByNumeroItem(List<Integer> listaNumeroItem, Integer numeroNFe) {
-		List<Object[]> l = entityManager
+		List<Object[]> l = em
 				.createQuery(
 						"select i.numeroItem, i.quantidadeFracionada from NFeItemFracionado i where i.numeroNFe = :numeroNFe and i.numeroItem in (:listaNumeroItem)",
 						Object[].class).setParameter("numeroNFe", numeroNFe)
@@ -77,7 +77,7 @@ public class NFeItemFracionadoDAO extends GenericDAO<NFeItemFracionado> {
 	}
 
 	public List<Integer[]> pesquisarQuantidadeTotalItemFracionado(Integer idPedido) {
-		List<Object[]> listaTot = entityManager
+		List<Object[]> listaTot = em
 				.createQuery(
 						"select i.numeroItem, sum(i.quantidadeFracionada) from NFeItemFracionado i where i.idPedido =:idPedido group by i.numeroItem",
 						Object[].class).setParameter("idPedido", idPedido).getResultList();
@@ -90,7 +90,7 @@ public class NFeItemFracionadoDAO extends GenericDAO<NFeItemFracionado> {
 	}
 
 	public List<Integer[]> pesquisarQuantidadeTotalItemFracionadoByNumeroNFe(Integer numeroNFe) {
-		List<Object[]> listaTot = entityManager
+		List<Object[]> listaTot = em
 				.createQuery(
 						"select i.numeroItem, sum(i.quantidadeFracionada) from NFeItemFracionado i where i.numeroNFe =:numeroNFe group by i.numeroItem",
 						Object[].class).setParameter("numeroNFe", numeroNFe).getResultList();
@@ -108,7 +108,7 @@ public class NFeItemFracionadoDAO extends GenericDAO<NFeItemFracionado> {
 		}
 		Long tot = QueryUtil
 				.gerarRegistroUnico(
-						entityManager
+						em
 								.createQuery(
 										"select sum(i.quantidadeFracionada) from NFeItemFracionado i where i.numeroNFe =:numeroNFe and i.numeroItem =:numeroItem")
 								.setParameter("numeroNFe", numeroNFe).setParameter("numeroItem", numeroItem),
@@ -119,7 +119,7 @@ public class NFeItemFracionadoDAO extends GenericDAO<NFeItemFracionado> {
 	public Integer pesqusisarQuantidadeTotalFracionadoByIdItemPedidoNFeExcluida(Integer idItemPedido, Integer numeroNFe) {
 		Long tot = QueryUtil
 				.gerarRegistroUnico(
-						entityManager
+						em
 								.createQuery(
 										"select SUM(i.quantidadeFracionada) from NFeItemFracionado i where i.idItemPedido =:idItemPedido and i.numeroNFe != :numeroNFe")
 								.setParameter("idItemPedido", idItemPedido).setParameter("numeroNFe", numeroNFe),
@@ -128,12 +128,12 @@ public class NFeItemFracionadoDAO extends GenericDAO<NFeItemFracionado> {
 	}
 
 	public void removerItemFracionadoByIdItemPedido(Integer idItemPedido) {
-		entityManager.createQuery("delete from NFeItemFracionado i where i.idItemPedido =:idItemPedido ")
+		em.createQuery("delete from NFeItemFracionado i where i.idItemPedido =:idItemPedido ")
 				.setParameter("idItemPedido", idItemPedido).executeUpdate();
 	}
 
 	public void removerItemFracionadoByNumeroNFe(Integer numeroNFe) {
-		entityManager.createQuery("delete NFeItemFracionado n where n.numeroNFe = :numeroNFe")
+		em.createQuery("delete NFeItemFracionado n where n.numeroNFe = :numeroNFe")
 				.setParameter("numeroNFe", numeroNFe).executeUpdate();
 	}
 }

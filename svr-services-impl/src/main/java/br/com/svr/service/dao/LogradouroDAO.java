@@ -13,7 +13,7 @@ public class LogradouroDAO extends GenericDAO<Logradouro> {
 
 	public String pesquisarCodigoMunicipioByCep(String cep) {
 		return QueryUtil.gerarRegistroUnico(
-				entityManager.createQuery(
+				em.createQuery(
 						"select c.codigoMunicipio from Endereco e inner join e.cidade c where e.cep = :cep")
 						.setParameter("cep", cep), String.class, null);
 	}

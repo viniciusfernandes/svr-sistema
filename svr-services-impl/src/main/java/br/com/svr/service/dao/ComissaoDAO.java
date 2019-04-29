@@ -29,7 +29,7 @@ public class ComissaoDAO extends GenericDAO<Comissao> {
 		}
 		s.append(" from Comissao c where  c.idVendedor = :idVendedor and c.dataFim = null");
 		return QueryUtil.gerarRegistroUnico(
-				entityManager.createQuery(s.toString()).setParameter("idVendedor", idVendedor), Double.class, null);
+				em.createQuery(s.toString()).setParameter("idVendedor", idVendedor), Double.class, null);
 	}
 
 	public Comissao pesquisarById(Integer idComissao) {
@@ -38,7 +38,7 @@ public class ComissaoDAO extends GenericDAO<Comissao> {
 
 	@SuppressWarnings("unchecked")
 	public List<Comissao> pesquisarComissaoByIdVendedor(Integer idVendedor) {
-		return entityManager
+		return em
 				.createQuery("select c from Comissao c where c.idVendedor = :idVendedor order by c.dataInicio desc ")
 				.setParameter("idVendedor", idVendedor).getResultList();
 	}
@@ -55,7 +55,7 @@ public class ComissaoDAO extends GenericDAO<Comissao> {
 		}
 		select.append(" c.idVendedor = null order by c.dataInicio desc ");
 
-		Query query = entityManager.createQuery(select.toString());
+		Query query = em.createQuery(select.toString());
 		if (formaMaterial != null) {
 			query.setParameter("idFormaMaterial", formaMaterial.indexOf());
 		}
@@ -82,7 +82,7 @@ public class ComissaoDAO extends GenericDAO<Comissao> {
 
 		select.append(" c.dataFim = null ");
 
-		Query query = entityManager.createQuery(select.toString());
+		Query query = em.createQuery(select.toString());
 		if (idFormaMaterial != null) {
 			query.setParameter("idFormaMaterial", idFormaMaterial);
 		}
@@ -99,7 +99,7 @@ public class ComissaoDAO extends GenericDAO<Comissao> {
 		}
 		return QueryUtil
 				.gerarRegistroUnico(
-						entityManager
+						em
 								.createQuery(
 										"select new Comissao(c.id, c.idVendedor, c.aliquotaRevenda, c.aliquotaRepresentacao, c.dataInicio) from Comissao c where  c.idVendedor = :idVendedor and c.dataFim = null")
 								.setParameter("idVendedor", idVendedor), Comissao.class, null);

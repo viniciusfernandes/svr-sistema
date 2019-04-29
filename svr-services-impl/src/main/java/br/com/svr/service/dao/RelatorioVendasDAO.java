@@ -25,7 +25,7 @@ public class RelatorioVendasDAO extends GenericDAO<Object> {
 		select.append("group by v.nome, r.nomeFantasia ");
 		select.append("order by v.nome ");
 		
-		Query query = this.entityManager.createQuery(select.toString());
+		Query query = this.em.createQuery(select.toString());
 		query.setParameter("dataInicio", dataInicio);
 		query.setParameter("dataFim", dataFim);
 		query.setParameter("situacaoEnviado", SituacaoPedido.ENVIADO);
@@ -41,7 +41,7 @@ public class RelatorioVendasDAO extends GenericDAO<Object> {
 		select.append("group by date_trunc( 'month', p.data_envio), p.data_envio, r.nome_fantasia ");
 		select.append("order by r.nome_fantasia , p.data_envio ");
 
-		Query query = this.entityManager.createNativeQuery(select.toString());
+		Query query = this.em.createNativeQuery(select.toString());
 		return query.getResultList();
 	}
 	

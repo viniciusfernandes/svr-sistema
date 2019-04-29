@@ -30,7 +30,7 @@ public class NFePedidoDAO extends GenericDAO<NFePedido> {
 
 			s.append("where p.numero =:numero ");
 
-			Query q = entityManager.createQuery(s.toString()).setParameter("numero", p.getNumero())
+			Query q = em.createQuery(s.toString()).setParameter("numero", p.getNumero())
 					.setParameter("serie", p.getSerie()).setParameter("modelo", p.getModelo())
 					.setParameter("xmlNFe", p.getXmlNFe()).setParameter("idPedido", p.getIdPedido())
 					.setParameter("valor", p.getValor()).setParameter("valorICMS", p.getValorICMS());
@@ -48,7 +48,7 @@ public class NFePedidoDAO extends GenericDAO<NFePedido> {
 
 	public Integer pesquisarIdPedidoByNumeroNFe(Integer numeroNFe) {
 		return QueryUtil.gerarRegistroUnico(
-				entityManager.createQuery("select p.pedido.id from NFePedido p where :numeroNFe = p.numero ")
+				em.createQuery("select p.pedido.id from NFePedido p where :numeroNFe = p.numero ")
 						.setParameter("numeroNFe", numeroNFe), Integer.class, null);
 	}
 
@@ -60,7 +60,7 @@ public class NFePedidoDAO extends GenericDAO<NFePedido> {
 			s.append("and n.pedido.finalidadePedido in (:listaFinalidadePed)");
 		}
 
-		TypedQuery<NFePedido> q = entityManager.createQuery(s.toString(), NFePedido.class)
+		TypedQuery<NFePedido> q = em.createQuery(s.toString(), NFePedido.class)
 				.setParameter("tipoNFe", tipoNFe).setParameter("tipoSituacaoNFe", tipoSituacaoNFe)
 				.setParameter("dataInicial", dataInicial).setParameter("dataFinal", dataFinal);
 		if (listaFinalidadePed != null && !listaFinalidadePed.isEmpty()) {
@@ -77,14 +77,14 @@ public class NFePedidoDAO extends GenericDAO<NFePedido> {
 		} else {
 			s.append("numeroTriagularizado == null");
 		}
-		return QueryUtil.gerarRegistroUnico(entityManager.createQuery(s.toString()).setParameter("idPedido", idPedido),
+		return QueryUtil.gerarRegistroUnico(em.createQuery(s.toString()).setParameter("idPedido", idPedido),
 				Integer.class, null);
 	}
 
 	public Object[] pesquisarNumeroSerieModeloNFe() {
 		return QueryUtil
 				.gerarRegistroUnico(
-						entityManager
+						em
 								.createQuery("select p.numero, p.serie, p.modelo, (select max(p2.numeroAssociado) from NFePedido p2) from NFePedido p where p.numero = (select max(p1.numero) from NFePedido p1 ) "),
 						Object[].class, null);
 	}
@@ -95,7 +95,7 @@ public class NFePedidoDAO extends GenericDAO<NFePedido> {
 		// nao tenha sido a triangularizacao
 		return QueryUtil
 				.gerarRegistroUnico(
-						entityManager
+						em
 								.createQuery(
 										"select p.xmlNFe from NFePedido p where p.numero = (select min(p2.numero) from NFePedido p2 where p2.idPedido =:idPedido and p2.numeroAssociado = null)")
 								.setParameter("idPedido", idPedido), String.class, null);
@@ -103,12 +103,12 @@ public class NFePedidoDAO extends GenericDAO<NFePedido> {
 
 	public String pesquisarXMLNFeByNumero(Integer numero) {
 		return QueryUtil.gerarRegistroUnico(
-				entityManager.createQuery("select p.xmlNFe from NFePedido p where p.numero = :numero").setParameter(
+				em.createQuery("select p.xmlNFe from NFePedido p where p.numero = :numero").setParameter(
 						"numero", numero), String.class, null);
 	}
 
 	public void removerNFePedido(Integer numeroNFe) {
-		entityManager.createQuery("delete NFePedido n where n.numero = :numeroNFe")
+		em.createQuery("delete NFePedido n where n.numero = :numeroNFe")
 				.setParameter("numeroNFe", numeroNFe).executeUpdate();
 	}
 }

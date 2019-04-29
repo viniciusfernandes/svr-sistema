@@ -18,7 +18,7 @@ public class NFeDuplicataDAO extends GenericDAO<NFeDuplicata> {
 
 	public void alterarDuplicataById(Integer idDuplicata, Date dataVencimento, Double valor, String codigoBanco,
 			String nomeBanco, TipoSituacaoDuplicata tipo) {
-		entityManager
+		em
 				.createQuery(
 						"update NFeDuplicata d set d.dataVencimento =:dataVencimento, d.valor =:valor, d.codigoBanco=:codigoBanco, d.nomeBanco=:nomeBanco, d.tipoSituacaoDuplicata =:tipo  where d.id = :idDuplicata")
 				.setParameter("dataVencimento", dataVencimento).setParameter("idDuplicata", idDuplicata)
@@ -27,7 +27,7 @@ public class NFeDuplicataDAO extends GenericDAO<NFeDuplicata> {
 	}
 
 	public void alterarSituacaoById(Integer idDuplicata, TipoSituacaoDuplicata tipoSituacaoDuplicata) {
-		entityManager
+		em
 				.createQuery(
 						"update NFeDuplicata d set d.tipoSituacaoDuplicata=:tipoSituacaoDuplicata where d.id = :idDuplicata")
 				.setParameter("tipoSituacaoDuplicata", tipoSituacaoDuplicata).setParameter("idDuplicata", idDuplicata)
@@ -36,7 +36,7 @@ public class NFeDuplicataDAO extends GenericDAO<NFeDuplicata> {
 
 	public Date pesquisarDataVencimentoById(Integer idDuplicata) {
 		return QueryUtil.gerarRegistroUnico(
-				entityManager.createQuery("select d.dataVencimento from NFeDuplicata d where d.id=:idDuplicata")
+				em.createQuery("select d.dataVencimento from NFeDuplicata d where d.id=:idDuplicata")
 						.setParameter("idDuplicata", idDuplicata), Date.class, null);
 	}
 
@@ -46,7 +46,7 @@ public class NFeDuplicataDAO extends GenericDAO<NFeDuplicata> {
 		if (dataInicial != null && dataFinal != null) {
 			s.append("and d.dataVencimento >=:dataInicial and d.dataVencimento <=:dataFinal");
 		}
-		TypedQuery<NFeDuplicata> q = entityManager.createQuery(s.toString(), NFeDuplicata.class);
+		TypedQuery<NFeDuplicata> q = em.createQuery(s.toString(), NFeDuplicata.class);
 		if (dataInicial != null && dataFinal != null) {
 			q.setParameter("dataInicial", dataInicial).setParameter("dataFinal", dataFinal);
 
@@ -56,7 +56,7 @@ public class NFeDuplicataDAO extends GenericDAO<NFeDuplicata> {
 
 	public NFeDuplicata pesquisarDuplicataById(Integer idDuplicata) {
 		return QueryUtil.gerarRegistroUnico(
-				entityManager.createQuery("select d from NFeDuplicata d where d.id =:idDuplicata").setParameter(
+				em.createQuery("select d from NFeDuplicata d where d.id =:idDuplicata").setParameter(
 						"idDuplicata", idDuplicata), NFeDuplicata.class, null);
 	}
 
@@ -85,7 +85,7 @@ public class NFeDuplicataDAO extends GenericDAO<NFeDuplicata> {
 			s.append("where d.idCliente =:idCliente ");
 		}
 
-		TypedQuery<NFeDuplicata> q = entityManager.createQuery(s.toString(), NFeDuplicata.class);
+		TypedQuery<NFeDuplicata> q = em.createQuery(s.toString(), NFeDuplicata.class);
 		if (numeroNFe != null) {
 			q.setParameter("numeroNFe", numeroNFe);
 		} else if (idPedido != null) {
@@ -97,7 +97,7 @@ public class NFeDuplicataDAO extends GenericDAO<NFeDuplicata> {
 	}
 
 	public List<NFeDuplicata> pesquisarDuplicataByPeriodo(Periodo periodo) {
-		return entityManager
+		return em
 				.createQuery(
 						"select new NFeDuplicata(d.codigoBanco, d.dataVencimento, d.id, d.nomeBanco, d.nomeCliente, d.nFe.numero, d.parcela, d.tipoSituacaoDuplicata, d.totalParcelas, d.valor) from NFeDuplicata d where d.dataVencimento>= :dataInicial and d.dataVencimento<= :dataFinal",
 						NFeDuplicata.class).setParameter("dataInicial", periodo.getInicio())
@@ -105,12 +105,12 @@ public class NFeDuplicataDAO extends GenericDAO<NFeDuplicata> {
 	}
 
 	public void removerDuplicataById(Integer idDuplicata) {
-		entityManager.createQuery("delete NFeDuplicata d where d.id = :idDuplicata")
+		em.createQuery("delete NFeDuplicata d where d.id = :idDuplicata")
 				.setParameter("idDuplicata", idDuplicata).executeUpdate();
 	}
 
 	public void removerDuplicataByNumeroNFe(Integer numeroNFe) {
-		entityManager.createQuery("delete NFeDuplicata d where d.nFe.numero =:numeroNFe")
+		em.createQuery("delete NFeDuplicata d where d.nFe.numero =:numeroNFe")
 				.setParameter("numeroNFe", numeroNFe).executeUpdate();
 	}
 }

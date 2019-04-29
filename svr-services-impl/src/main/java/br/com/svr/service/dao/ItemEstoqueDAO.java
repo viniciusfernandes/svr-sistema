@@ -20,7 +20,7 @@ public class ItemEstoqueDAO extends GenericDAO<ItemEstoque> {
 
 	public void alterarPrecoMedioFatorICMS(List<ItemEstoque> listaItem) {
 		for (ItemEstoque item : listaItem) {
-			entityManager
+			em
 					.createQuery(
 							"update ItemEstoque i set i.precoMedio = :precoMedio, i.precoMedioFatorICMS =:precoMedioFatorICMS where i.id = :idItemEstoque ")
 
@@ -31,7 +31,7 @@ public class ItemEstoqueDAO extends GenericDAO<ItemEstoque> {
 	}
 
 	public void alterarQuantidade(Integer idItemEstoque, Integer quantidade) {
-		entityManager.createQuery("update ItemEstoque i set i.quantidade = :quantidade where i.id = :idItemEstoque ")
+		em.createQuery("update ItemEstoque i set i.quantidade = :quantidade where i.id = :idItemEstoque ")
 				.setParameter("quantidade", quantidade).setParameter("idItemEstoque", idItemEstoque).executeUpdate();
 	}
 
@@ -50,7 +50,7 @@ public class ItemEstoqueDAO extends GenericDAO<ItemEstoque> {
 			select.append("where i.formaMaterial = :formaMaterial ");
 		}
 
-		Query query = entityManager.createQuery(select.toString());
+		Query query = em.createQuery(select.toString());
 		if (idMaterial != null) {
 			query.setParameter("idMaterial", idMaterial);
 		}
@@ -92,7 +92,7 @@ public class ItemEstoqueDAO extends GenericDAO<ItemEstoque> {
 			}
 		}
 
-		Query query = entityManager.createQuery(update.toString())
+		Query query = em.createQuery(update.toString())
 
 		.setParameter("material", configuracao.getMaterial())
 				.setParameter("formaMaterial", configuracao.getFormaMaterial())
@@ -117,7 +117,7 @@ public class ItemEstoqueDAO extends GenericDAO<ItemEstoque> {
 	}
 
 	public void inserirConfiguracaoNcmEstoque(Integer idMaterial, FormaMaterial formaMaterial, String ncm) {
-		entityManager
+		em
 				.createQuery(
 						"update ItemEstoque i set i.ncm = :ncm where i.material.id = :idMaterial and i.formaMaterial = :formaMaterial ")
 				.setParameter("idMaterial", idMaterial).setParameter("formaMaterial", formaMaterial)
@@ -130,7 +130,7 @@ public class ItemEstoqueDAO extends GenericDAO<ItemEstoque> {
 
 	public FormaMaterial pesquisarFormaMaterialItemEstoque(Integer idItemEstoque) {
 		return QueryUtil.gerarRegistroUnico(
-				entityManager.createQuery("select i.formaMaterial from ItemEstoque i where i.id = :idItemEstoque")
+				em.createQuery("select i.formaMaterial from ItemEstoque i where i.id = :idItemEstoque")
 						.setParameter("idItemEstoque", idItemEstoque), FormaMaterial.class, null);
 	}
 
@@ -173,7 +173,7 @@ public class ItemEstoqueDAO extends GenericDAO<ItemEstoque> {
 			select.append("order by i.formaMaterial, i.material.sigla, i.medidaInterna asc, i.medidaExterna asc, i.comprimento asc ");
 		}
 
-		Query query = entityManager.createQuery(select.toString());
+		Query query = em.createQuery(select.toString());
 		if (idMaterial != null) {
 			query.setParameter("idMaterial", idMaterial);
 		}
@@ -233,7 +233,7 @@ public class ItemEstoqueDAO extends GenericDAO<ItemEstoque> {
 			select.append("order by i.formaMaterial, i.material.sigla, i.medidaInterna asc, i.medidaExterna asc, i.comprimento asc ");
 		}
 
-		TypedQuery<ItemEstoque> query = entityManager.createQuery(select.toString(), ItemEstoque.class)
+		TypedQuery<ItemEstoque> query = em.createQuery(select.toString(), ItemEstoque.class)
 				.setParameter("idMaterial", idMaterial).setParameter("formaMaterial", formaMaterial);
 
 		if (medidaExterna != null) {
@@ -254,13 +254,13 @@ public class ItemEstoqueDAO extends GenericDAO<ItemEstoque> {
 		StringBuilder select = gerarConstrutorItemEstoque();
 
 		select.append(" where i.quantidade < i.quantidadeMinima order by i.formaMaterial, i.material.sigla, i.medidaExterna asc, i.medidaInterna asc, i.comprimento asc ");
-		return entityManager.createQuery(select.toString(), ItemEstoque.class).getResultList();
+		return em.createQuery(select.toString(), ItemEstoque.class).getResultList();
 	}
 
 	public Object[] pesquisarMargemMininaEPrecoMedio(Integer idItemEstoque) {
 		return QueryUtil
 				.gerarRegistroUnico(
-						entityManager
+						em
 								.createQuery(
 										"select i.margemMinimaLucro, i.precoMedioFatorICMS, i.precoMedio, i.aliquotaIPI from ItemEstoque i where i.id= :idItemEstoque")
 								.setParameter("idItemEstoque", idItemEstoque), Object[].class, new Object[] { null,
@@ -268,7 +268,7 @@ public class ItemEstoqueDAO extends GenericDAO<ItemEstoque> {
 	}
 
 	public String pesquisarNcmItemEstoque(Integer idMaterial, FormaMaterial formaMaterial) {
-		Query query = entityManager
+		Query query = em
 				.createQuery(
 						"select i.ncm from ItemEstoque i where i.material.id = :idMaterial and i.formaMaterial = :formaMaterial and i.ncm != null")
 				.setParameter("idMaterial", idMaterial).setParameter("formaMaterial", formaMaterial).setFirstResult(0)
@@ -295,7 +295,7 @@ public class ItemEstoqueDAO extends GenericDAO<ItemEstoque> {
 			select.append("select i ");
 		}
 		select.append("from ItemEstoque i where i.material.id = :idMaterial and i.formaMaterial = :formaMaterial and i.descricaoPeca = :descricaoPeca");
-		TypedQuery<ItemEstoque> query = entityManager.createQuery(select.toString(), ItemEstoque.class);
+		TypedQuery<ItemEstoque> query = em.createQuery(select.toString(), ItemEstoque.class);
 		List<ItemEstoque> l = query.setParameter("formaMaterial", FormaMaterial.PC)
 				.setParameter("idMaterial", idMaterial).setParameter("descricaoPeca", descricaoPeca).getResultList();
 
@@ -313,7 +313,7 @@ public class ItemEstoqueDAO extends GenericDAO<ItemEstoque> {
 			select.append("where i.formaMaterial = :formaMaterial and i.material.id = :idMaterial ");
 		}
 
-		TypedQuery<ItemEstoque> query = entityManager.createQuery(select.toString(), ItemEstoque.class);
+		TypedQuery<ItemEstoque> query = em.createQuery(select.toString(), ItemEstoque.class);
 		if (idItemEstoque != null) {
 			query.setParameter("idItemEstoque", idItemEstoque);
 		} else {
@@ -325,7 +325,7 @@ public class ItemEstoqueDAO extends GenericDAO<ItemEstoque> {
 
 	public Integer pesquisarQuantidadeByIdItemEstoque(Integer idItemEstoque) {
 		return QueryUtil.gerarRegistroUnico(
-				entityManager.createQuery("select i.quantidade from ItemEstoque i where i.id = :idItemEstoque")
+				em.createQuery("select i.quantidade from ItemEstoque i where i.id = :idItemEstoque")
 						.setParameter("idItemEstoque", idItemEstoque), Integer.class, 0);
 	}
 

@@ -16,7 +16,7 @@ public class UsuarioDAO extends GenericDAO<Usuario> {
 	}
 
 	public void alterarComissaoSimples(Integer iUsuario, boolean comissaoSimples) {
-		entityManager
+		em
 				.createQuery("update Usuario u set u.comissionadoSimples = :comissaoSimples where u.id =:iUsuario")
 				.setParameter("iUsuario", iUsuario).setParameter("comissaoSimples", comissaoSimples).executeUpdate();
 	}
@@ -24,7 +24,7 @@ public class UsuarioDAO extends GenericDAO<Usuario> {
 	public Usuario pesquisarByEmailSenha(String email, String senha) {
 		return QueryUtil
 				.gerarRegistroUnico(
-						entityManager
+						em
 								.createQuery(
 										"select u from Usuario u left join fetch u.listaPerfilAcesso where u.email = :email and u.senha = :senha",
 										Usuario.class).setParameter("email", email).setParameter("senha", senha),
@@ -37,13 +37,13 @@ public class UsuarioDAO extends GenericDAO<Usuario> {
 
 	public boolean pesquisarComissionadoSimples(Integer idUsuario) {
 		return QueryUtil.gerarRegistroUnico(
-				entityManager.createQuery(
+				em.createQuery(
 						"select u.comissionadoSimples from Usuario u.comissionadoSimples where u.id=:idUsuario")
 						.setParameter("idUsuario", idUsuario), boolean.class, false);
 	}
 
 	public Integer pesquisarIdClienteAssociadoByIdVendedor(Integer idCliente, Integer idVendedor) {
-		Query query = entityManager
+		Query query = em
 				.createQuery("select c.id from Cliente c where c.id =:id and c.vendedor.id = :idVendedor ");
 		query.setParameter("id", idCliente).setParameter("idVendedor", idVendedor);
 		return QueryUtil.gerarRegistroUnico(query, Integer.class, null);
@@ -51,19 +51,19 @@ public class UsuarioDAO extends GenericDAO<Usuario> {
 
 	@SuppressWarnings("unchecked")
 	public List<PerfilAcesso> pesquisarPerfisAssociadosByIdUsuario(Integer idUsuario) {
-		return entityManager.createQuery("select u.listaPerfilAcesso from Usuario u where  u.id = :idUsuario ")
+		return em.createQuery("select u.listaPerfilAcesso from Usuario u where  u.id = :idUsuario ")
 				.setParameter("idUsuario", idUsuario).getResultList();
 	}
 
 	public String pesquisarSenha(Integer idUsuario) {
-		Query query = this.entityManager.createQuery("select u.senha from Usuario u where u.id = :id");
+		Query query = this.em.createQuery("select u.senha from Usuario u where u.id = :id");
 		query.setParameter("id", idUsuario);
 		return QueryUtil.gerarRegistroUnico(query, String.class, null);
 	}
 
 	public Usuario pesquisarUsuarioResumidoById(Integer id) {
 		return QueryUtil.gerarRegistroUnico(
-				this.entityManager.createQuery(
+				this.em.createQuery(
 						"select new Usuario(c.id, c.nome, c.sobrenome, c.email) from Usuario c where c.id = :id")
 						.setParameter("id", id), Usuario.class, null);
 	}
@@ -71,7 +71,7 @@ public class UsuarioDAO extends GenericDAO<Usuario> {
 	public boolean pesquisarVendedorAtivo(Integer idVendedor) {
 		return QueryUtil
 				.gerarRegistroUnico(
-						entityManager
+						em
 								.createQuery(
 										"select u.ativo from Usuario u inner join u.listaPerfilAcesso p where u.id =:idVendedor and p.id = :idPerfilAcesso")
 								.setParameter("idVendedor", idVendedor)
@@ -80,20 +80,20 @@ public class UsuarioDAO extends GenericDAO<Usuario> {
 	}
 
 	public Usuario pesquisarVendedorByIdCliente(Integer idCliente) {
-		Query query = this.entityManager.createQuery("select v from Cliente c inner join c.vendedor v where c.id =:id");
+		Query query = this.em.createQuery("select v from Cliente c inner join c.vendedor v where c.id =:id");
 		query.setParameter("id", idCliente);
 		return QueryUtil.gerarRegistroUnico(query, Usuario.class, null);
 	}
 
 	public Usuario pesquisarVendedorResumidoByIdCliente(Integer idCliente) {
-		Query query = this.entityManager
+		Query query = this.em
 				.createQuery("select new Usuario(v.id, v.nome, v.sobrenome, v.email) from Cliente c inner join c.vendedor v where c.id =:id");
 		query.setParameter("id", idCliente);
 		return QueryUtil.gerarRegistroUnico(query, Usuario.class, null);
 	}
 
 	public void removerLogradouro(Integer idLogradouro) {
-		entityManager.createQuery("update Usuario u set u.logradouro = null where u.logradouro.id = :idLogradouro")
+		em.createQuery("update Usuario u set u.logradouro = null where u.logradouro.id = :idLogradouro")
 				.setParameter("idLogradouro", idLogradouro).executeUpdate();
 	}
 }
