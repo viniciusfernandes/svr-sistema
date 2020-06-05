@@ -6,7 +6,9 @@ import javax.ejb.Local;
 
 @Local
 public interface ItemAguardandoEmpacotamentoMonitor {
-	Collection<Integer> monitorarItemPedidoAguardandoMaterial();
+	void monitorarItemPedido();
 
 	Collection<Integer> monitorarItemPedidoAguardandoCompra();
+
+	Collection<Integer> monitorarItemPedidoAguardandoMaterial();
 }

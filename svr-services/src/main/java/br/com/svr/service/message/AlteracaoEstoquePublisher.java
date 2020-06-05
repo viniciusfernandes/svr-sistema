@@ -1,8 +1,6 @@
 package br.com.svr.service.message;
 
-import javax.ejb.Local;
-
-@Local
+//@Local
 public interface AlteracaoEstoquePublisher {
 	public void publicar();
 }
