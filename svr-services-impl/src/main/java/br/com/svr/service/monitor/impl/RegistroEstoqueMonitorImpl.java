@@ -20,7 +20,7 @@ public class RegistroEstoqueMonitorImpl implements RegistroEstoqueMonitor {
 
 	@Override
 	@Schedule(hour = "23", minute = "59")
-	public void removerRegistroExpirado() {
+	public void monitorarRegistroExpirado() {
 		try {
 			registroEstoqueService.removerRegistroExpirado();
 		} catch (BusinessException e) {

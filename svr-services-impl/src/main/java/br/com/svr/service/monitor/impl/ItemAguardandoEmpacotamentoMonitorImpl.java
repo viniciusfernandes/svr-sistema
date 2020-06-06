@@ -8,14 +8,17 @@ import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.ejb.ConcurrencyManagement;
+import javax.ejb.ConcurrencyManagementType;
 import javax.ejb.EJB;
-import javax.ejb.Stateless;
+import javax.ejb.Singleton;
 
 import br.com.svr.service.PedidoService;
 import br.com.svr.service.exception.BusinessException;
 import br.com.svr.service.monitor.ItemAguardandoEmpacotamentoMonitor;
 
-@Stateless
+@Singleton
+@ConcurrencyManagement(ConcurrencyManagementType.CONTAINER)
 public class ItemAguardandoEmpacotamentoMonitorImpl implements ItemAguardandoEmpacotamentoMonitor {
 
 	private final Logger logger = Logger.getLogger(ItemAguardandoEmpacotamentoMonitorImpl.class.getName());
@@ -24,13 +27,7 @@ public class ItemAguardandoEmpacotamentoMonitorImpl implements ItemAguardandoEmp
 	private PedidoService pedidoService;
 
 	@Override
-	public void monitorarItemPedido() {
-		monitorarItemPedidoAguardandoMaterial();
-		monitorarItemPedidoAguardandoCompra();
-	}
-
-	@Override
-	public Collection<Integer> monitorarItemPedidoAguardandoCompra() {
+	public Collection<Integer> empacotarItemPedidoAguardandoCompra() {
 		final List<Integer> listaIdPedido = pedidoService.pesquisarIdPedidoAguardandoCompra();
 		boolean empacotamentoOk = false;
 		// Listas utilizadas para logar o que foi enviado para o empacotamento.
@@ -59,7 +56,7 @@ public class ItemAguardandoEmpacotamentoMonitorImpl implements ItemAguardandoEmp
 	}
 
 	@Override
-	public Collection<Integer> monitorarItemPedidoAguardandoMaterial() {
+	public Collection<Integer> empacotarItemPedidoAguardandoMaterial() {
 		final List<Integer> listaIdPedido = pedidoService.pesquisarIdPedidoAguardandoMaterial();
 		boolean empacotamentoOk = false;
 		// Listas utilizadas para logar o que foi enviado para o empacotamento.
@@ -85,5 +82,12 @@ public class ItemAguardandoEmpacotamentoMonitorImpl implements ItemAguardandoEmp
 			logger.info("Monitor enviou para o empacotamento os pedidos aguardando material No.: " + Arrays.deepToString(empacotados.toArray()));
 		}
 		return empacotados;
+	}
+
+	@Override
+	// @Schedule(hour = "*/1")
+	public void monitorarItemPedido() {
+		empacotarItemPedidoAguardandoMaterial();
+		empacotarItemPedidoAguardandoCompra();
 	}
 }

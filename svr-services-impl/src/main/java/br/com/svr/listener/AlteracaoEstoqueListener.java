@@ -16,10 +16,14 @@ public class AlteracaoEstoqueListener implements MessageListener {
 	// @EJB
 	private ItemAguardandoEmpacotamentoMonitor pedidoAguardandoMaterialMonitor;
 
+	/*
+	 * Esse listener deveria ser acionado sempre que haver uma alteracao de estoque, e o o publisher
+	 * estava no controller de estoque antes de ser desabilitado no sistema.
+	 */
 	@Override
 	public void onMessage(Message mensagem) {
-		pedidoAguardandoMaterialMonitor.monitorarItemPedidoAguardandoMaterial();
-		pedidoAguardandoMaterialMonitor.monitorarItemPedidoAguardandoCompra();
+		pedidoAguardandoMaterialMonitor.empacotarItemPedidoAguardandoMaterial();
+		pedidoAguardandoMaterialMonitor.empacotarItemPedidoAguardandoCompra();
 	}
 
 }

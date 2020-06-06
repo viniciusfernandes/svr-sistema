@@ -16,7 +16,6 @@ import br.com.svr.service.entity.ItemEstoque;
 import br.com.svr.service.entity.Material;
 import br.com.svr.service.entity.RegistroEstoque;
 import br.com.svr.service.exception.BusinessException;
-import br.com.svr.service.monitor.ItemAguardandoEmpacotamentoMonitor;
 import br.com.svr.service.wrapper.PaginacaoWrapper;
 import br.com.svr.service.wrapper.RelatorioWrapper;
 import br.com.svr.util.NumeroUtils;
@@ -30,9 +29,6 @@ public class EstoqueController extends AbstractController {
 
 	@Servico
 	private EstoqueService estoqueService;
-
-	@Servico
-	private ItemAguardandoEmpacotamentoMonitor itemAguardandoEmpacotamentoMonitor;
 
 	@Servico
 	private MaterialService materialService;
@@ -145,7 +141,6 @@ public class EstoqueController extends AbstractController {
 			addAtributo("itemPedido", itemPedido);
 		}
 
-		itemAguardandoEmpacotamentoMonitor.monitorarItemPedido();
 		addAtributo("permanecerTopo", true);
 		if (material != null && formaMaterial != null) {
 			pesquisarItemEstoque(material, formaMaterial);
@@ -326,8 +321,6 @@ public class EstoqueController extends AbstractController {
 			gerarListaMensagemErro(e);
 			addAtributo("permanecerTopo", true);
 		}
-
-		itemAguardandoEmpacotamentoMonitor.monitorarItemPedido();
 
 		pesquisarItemEstoque(material, formaMaterial);
 	}

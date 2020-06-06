@@ -18,7 +18,6 @@
  */
 function recarregarMenu() {
 	window.top.location.href='<c:url value="/login"/>';
-	
 }
 recarregarMenu();
 </script>
