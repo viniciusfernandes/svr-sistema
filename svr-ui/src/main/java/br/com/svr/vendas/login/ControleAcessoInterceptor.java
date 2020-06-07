@@ -48,10 +48,10 @@ public class ControleAcessoInterceptor implements Interceptor {
 		/*
 		 * Caso o usuario nao esteja logado no sistema, vamos direciona-lo a tela de login.
 		 */
-		if (!usuarioInfo.isLogado()) {
+		if (!usuarioInfo.isAutenticado()) {
 			result.redirectTo(MenuController.class).blanckHome();
 		}
-		System.out.println("Controle Acesso. Usuario logado: " + usuarioInfo.isLogado() + ". Metodo: " + metodo + ". Recurso: " + resourceInstance);
+		System.out.println("Controle Acesso. Usuario logado: " + usuarioInfo.isAutenticado() + ". Metodo: " + metodo + ". Recurso: " + resourceInstance);
 
 		if (auditoriaHabilidata) {
 			Get get = null;
@@ -75,7 +75,7 @@ public class ControleAcessoInterceptor implements Interceptor {
 		}
 		catch (final InterceptionException e) {
 			final StringBuilder mensagem = new StringBuilder();
-			if (usuarioInfo.isLogado()) {
+			if (usuarioInfo.isAutenticado()) {
 				mensagem.append("Falha no redirecionamento do usuario \"").append(usuarioInfo.getDescricaoLogin()).append("\"")
 						.append(" que requisitou o metodo ").append(metodo.getMethod().getName());
 			}

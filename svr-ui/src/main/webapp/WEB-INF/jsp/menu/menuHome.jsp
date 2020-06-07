@@ -25,7 +25,7 @@ $(document).ready(function() {
 				<input type="text" name="email" class="uppercaseBloqueado" style="width: 25%"/>
 				<label>Email:</label>
 				<c:choose>
-					<c:when test="${not usuarioInfo.logado}">
+					<c:when test="${not usuarioInfo.autenticado}">
 						<label class="bemVindo">Usuário não autenticado no sistema!</label>
 					</c:when>
 					<c:otherwise>

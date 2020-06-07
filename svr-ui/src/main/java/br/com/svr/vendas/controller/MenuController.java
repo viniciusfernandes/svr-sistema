@@ -55,5 +55,6 @@ public class MenuController extends AbstractController {
 	@AcessoLivre
 	@Get("/")
 	public void menuHome() {
+		System.out.println("Menu com usuario autenticado: " + isAutenticado());
 	}
 }

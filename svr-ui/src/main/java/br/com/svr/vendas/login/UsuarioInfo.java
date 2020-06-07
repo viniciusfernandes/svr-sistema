@@ -16,92 +16,97 @@ import br.com.svr.service.entity.Usuario;
 @SessionScoped
 public class UsuarioInfo {
 
-    private Integer codigoUsuario;
-    private boolean compraPermitida;
-    private String email;
-    private List<TipoAcesso> listaTipoAcesso;
+	private Integer codigoUsuario;
+	private boolean compraPermitida;
+	private String email;
+	private List<TipoAcesso> listaTipoAcesso;
 
-    private String nome;
-    private String nomeCompleto;
-    private boolean usuarioLogado = false;
-    private boolean vendaPermitida;
+	private String nome;
+	private String nomeCompleto;
+	private boolean usuarioAutenticado = false;
+	private boolean vendaPermitida;
 
-    public Integer getCodigoUsuario() {
-        return this.codigoUsuario;
-    }
+	public UsuarioInfo() {
+		System.out.println("Instanciou usuario info: " + new SimpleDateFormat("HH:mm:sss").format(new Date()));
+	}
 
-    public String getDescricaoLogin() {
-        return nomeCompleto + " - " + new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new Date());
-    }
+	public Integer getCodigoUsuario() {
+		return codigoUsuario;
+	}
 
-    public String getEmail() {
-        return email;
-    }
+	public String getDescricaoLogin() {
+		return nomeCompleto + " - " + new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new Date());
+	}
 
-    public String getNome() {
-        return nome;
-    }
+	public String getEmail() {
+		return email;
+	}
 
-    public void inicializar(Usuario usuario) {
-        if (usuario == null) {
-            return;
-        }
+	public String getNome() {
+		return nome;
+	}
 
-        codigoUsuario = usuario.getId();
-        compraPermitida = usuario.isComprador();
-        nomeCompleto = usuario.getNomeCompleto();
-        nome = usuario.getNome();
-        email = usuario.getEmail();
-        vendaPermitida = usuario.isVendedor();
+	public void inicializar(Usuario usuario) {
+		System.out.println("Inicializando usuario info: " + usuario);
+		if (usuario == null) {
+			return;
+		}
 
-        usuarioLogado = true;
-        listaTipoAcesso = new ArrayList<TipoAcesso>();
+		codigoUsuario = usuario.getId();
+		compraPermitida = usuario.isComprador();
+		nomeCompleto = usuario.getNomeCompleto();
+		nome = usuario.getNome();
+		email = usuario.getEmail();
+		vendaPermitida = usuario.isVendedor();
 
-        if (usuario.getListaPerfilAcesso() != null) {
-            TipoAcesso tipoAcesso = null;
-            for (PerfilAcesso perfil : usuario.getListaPerfilAcesso()) {
-                tipoAcesso = TipoAcesso.valueOfBy(perfil.getDescricao());
-                if (tipoAcesso != null) {
-                    listaTipoAcesso.add(tipoAcesso);
-                }
-            }
-        }
-    }
+		usuarioAutenticado = true;
+		listaTipoAcesso = new ArrayList<TipoAcesso>();
 
-    public boolean isAcessoNaoPermitido(TipoAcesso... tipoAcesso) {
-        if (tipoAcesso == null) {
-            return false;
-        }
-        return this.usuarioLogado && !this.listaTipoAcesso.containsAll(Arrays.asList(tipoAcesso));
-    }
+		if (usuario.getListaPerfilAcesso() != null) {
+			TipoAcesso tipoAcesso = null;
+			for (final PerfilAcesso perfil : usuario.getListaPerfilAcesso()) {
+				tipoAcesso = TipoAcesso.valueOfBy(perfil.getDescricao());
+				if (tipoAcesso != null) {
+					listaTipoAcesso.add(tipoAcesso);
+				}
+			}
+		}
+	}
 
-    public boolean isAcessoPermitido(TipoAcesso... tipoAcesso) {
-        if (tipoAcesso == null) {
-            return false;
-        }
+	public boolean isAcessoNaoPermitido(TipoAcesso... tipoAcesso) {
+		if (tipoAcesso == null) {
+			return false;
+		}
+		return usuarioAutenticado && !listaTipoAcesso.containsAll(Arrays.asList(tipoAcesso));
+	}
 
-        for (TipoAcesso tipo : tipoAcesso) {
-            if (this.usuarioLogado && this.listaTipoAcesso.contains(tipo)) {
-                return true;
-            }
-        }
-        return false;
-    }
+	public boolean isAcessoPermitido(TipoAcesso... tipoAcesso) {
+		if (tipoAcesso == null) {
+			return false;
+		}
 
-    public boolean isCompraPermitida() {
-        return compraPermitida;
-    }
+		for (final TipoAcesso tipo : tipoAcesso) {
+			if (usuarioAutenticado && listaTipoAcesso.contains(tipo)) {
+				return true;
+			}
+		}
+		return false;
+	}
 
-    public boolean isLogado() {
-        return usuarioLogado;
-    }
+	public boolean isAutenticado() {
+		return usuarioAutenticado;
+	}
 
-    public boolean isVendaPermitida() {
-        return vendaPermitida;
-    }
+	public boolean isCompraPermitida() {
+		return compraPermitida;
+	}
 
-    public void limpar() {
-        this.usuarioLogado = false;
-        this.listaTipoAcesso = null;
-    }
+	public boolean isVendaPermitida() {
+		return vendaPermitida;
+	}
+
+	public void limpar() {
+		usuarioAutenticado = false;
+		listaTipoAcesso = null;
+	}
 }

@@ -28,22 +28,17 @@ public class LoginController extends AbstractController {
 		sessao = httpSession;
 	}
 
-	private void inicializarUsuarioInfo(Usuario usuario) {
-		usuarioInfo.inicializar(usuario);
-	}
-
 	@AcessoLivre
 	@Post("login/entrar")
 	public void logar(String email, String senha) {
 		try {
 			final Usuario usuario = autenticacaoService.autenticar(email, senha);
-
+			System.out.println("Logou usuario: " + usuario != null);
 			if (usuario == null || !usuario.isAtivo()) {
 				gerarListaMensagemAlerta("Falha na autenticação. Usuario/Senha inválido(s)");
 			}
-			else {
-				inicializarUsuarioInfo(usuario);
-			}
+
+			usuarioInfo.inicializar(usuario);
 			redirecTo(MenuController.class).menuHome();
 			System.out.println("Chegou usuario: " + email + " e senha: " + senha + ". Recuperou o usuario: "
 					+ (usuario == null ? false : usuario.getEmail() + " com a senha: " + usuario.getSenha()));

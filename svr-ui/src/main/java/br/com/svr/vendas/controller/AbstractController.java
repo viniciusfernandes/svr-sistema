@@ -718,6 +718,10 @@ public abstract class AbstractController {
 		return usuarioInfo.isAcessoPermitido(tipoAcesso);
 	}
 
+	boolean isAutenticado() {
+		return usuarioInfo.isAutenticado();
+	}
+
 	boolean isElementosAssociadosPreenchidosPicklist() {
 		return picklist.isElementosAssociadosPreenchidos();
 	}
