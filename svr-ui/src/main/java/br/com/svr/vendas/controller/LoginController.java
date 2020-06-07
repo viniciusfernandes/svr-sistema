@@ -2,14 +2,13 @@ package br.com.svr.vendas.controller;
 
 import javax.servlet.http.HttpSession;
 
-import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
 import br.com.svr.service.AutenticacaoService;
 import br.com.svr.service.entity.Usuario;
 import br.com.svr.service.exception.AutenticacaoException;
-import br.com.svr.vendas.controller.anotacao.Login;
+import br.com.svr.vendas.controller.anotacao.AcessoLivre;
 import br.com.svr.vendas.controller.anotacao.Servico;
 import br.com.svr.vendas.login.UsuarioInfo;
 
@@ -33,7 +32,7 @@ public class LoginController extends AbstractController {
 		usuarioInfo.inicializar(usuario);
 	}
 
-	@Login
+	@AcessoLivre
 	@Post("login/entrar")
 	public void logar(String email, String senha) {
 		try {
@@ -41,12 +40,11 @@ public class LoginController extends AbstractController {
 
 			if (usuario == null || !usuario.isAtivo()) {
 				gerarListaMensagemAlerta("Falha na autenticação. Usuario/Senha inválido(s)");
-				irPaginaHome();
 			}
 			else {
 				inicializarUsuarioInfo(usuario);
-				redirecTo(MenuController.class).menuHome();
 			}
+			redirecTo(MenuController.class).menuHome();
 			System.out.println("Chegou usuario: " + email + " e senha: " + senha + ". Recuperou o usuario: "
 					+ (usuario == null ? false : usuario.getEmail() + " com a senha: " + usuario.getSenha()));
 
@@ -57,27 +55,4 @@ public class LoginController extends AbstractController {
 		}
 	}
 
-	@Login
-	@Get("login")
-	public void loginHome() {
-	}
-
-	/*
-	 * Esse metodo foi implementado para o redirecionamento para a tela de login caso o usuario tenha a
-	 * sessao expirada, pois, ao clicarmos em qualquer link do menu, o conteudo da tela de login era
-	 * inserida no iframe da tela principal, ja que todos os itens do menu, ao serem clicados,
-	 * redirecionam o conteudo da resposta do servidor para o iframe, sendo assim, tivemos que criar
-	 * uma instrucao para que a tela de menu aponte para a URL da tela de login, sendo que esse
-	 * redirecionamento sera efetuado do lado do cliente atraves de um metodo em javascrpt.
-	 */
-	@Get("login/redirecionar")
-	public void redirecionarLogin() {
-	}
-
-	@Login
-	@Get("/login/sair")
-	public void sair() {
-		sessao.invalidate();
-		redirecTo(this.getClass()).redirecionarLogin();
-	}
 }

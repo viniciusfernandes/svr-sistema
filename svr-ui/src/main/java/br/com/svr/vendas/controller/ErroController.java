@@ -3,7 +3,7 @@ package br.com.svr.vendas.controller;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
-import br.com.svr.vendas.controller.anotacao.Login;
+import br.com.svr.vendas.controller.anotacao.AcessoLivre;
 
 @Resource
 public class ErroController extends AbstractController {
@@ -12,7 +12,7 @@ public class ErroController extends AbstractController {
         super(result);
     }
 
-    @Login
+    @AcessoLivre
     @Get("erro")
     public void erroHome() {
     }

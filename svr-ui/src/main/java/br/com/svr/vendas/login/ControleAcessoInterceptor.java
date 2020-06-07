@@ -15,8 +15,8 @@ import br.com.caelum.vraptor.core.InterceptorStack;
 import br.com.caelum.vraptor.interceptor.Interceptor;
 import br.com.caelum.vraptor.ioc.SessionScoped;
 import br.com.caelum.vraptor.resource.ResourceMethod;
-import br.com.svr.vendas.controller.LoginController;
-import br.com.svr.vendas.controller.anotacao.Login;
+import br.com.svr.vendas.controller.MenuController;
+import br.com.svr.vendas.controller.anotacao.AcessoLivre;
 
 /*
  * Consideramos como escopo de sessao pois em qualquer momento que fosse
@@ -40,7 +40,7 @@ public class ControleAcessoInterceptor implements Interceptor {
 
 	@Override
 	public boolean accepts(ResourceMethod metodo) {
-		return !metodo.getMethod().isAnnotationPresent(Login.class);
+		return !metodo.getMethod().isAnnotationPresent(AcessoLivre.class);
 	}
 
 	@Override
@@ -49,8 +49,7 @@ public class ControleAcessoInterceptor implements Interceptor {
 		 * Caso o usuario nao esteja logado no sistema, vamos direciona-lo a tela de login.
 		 */
 		if (!usuarioInfo.isLogado()) {
-			result.forwardTo(LoginController.class).redirecionarLogin();
-			// return;
+			result.redirectTo(MenuController.class).blanckHome();
 		}
 		System.out.println("Controle Acesso. Usuario logado: " + usuarioInfo.isLogado() + ". Metodo: " + metodo + ". Recurso: " + resourceInstance);
 

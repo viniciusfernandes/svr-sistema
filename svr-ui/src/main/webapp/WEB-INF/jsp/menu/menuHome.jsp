@@ -17,15 +17,26 @@ $(document).ready(function() {
 </head>
 <body>
 	<div id="content">
-		<form action="<c:url value="/login/sair"/>" method="get">
+	<form action="<c:url value="/login/entrar"/>" method="post">
 			<div class="bloco_autenticacao flutuante_esquerda">
-				<input type="submit" value="" class="botaoLogout"
-					title="Sair no sistema" /> <label class="bemVindo">Bem-vindo,
-					<c:out value="${usuarioInfo.descricaoLogin}" />
-				</label>
+				<input type="submit" value="" class="botaoLogin" title="Entrar no sistema"/>
+				<input type="password" name="senha" style="width: 8%"/>
+				<label>Senha:</label>
+				<input type="text" name="email" style="width: 25%"/>
+				<label>Email:</label>
+				<c:choose>
+					<c:when test="${not usuarioInfo.logado}">
+						<label class="bemVindo">Usuário não autenticado no sistema!</label>
+					</c:when>
+					<c:otherwise>
+						<label class="bemVindo">Bem-vindo, 
+						<c:out value="${usuarioInfo.descricaoLogin}" />
+					</label>
+					</c:otherwise>
+				</c:choose>
+				
 			</div>
 		</form>
-
 		<div class="enfeite flutuante_esquerda"></div>
 		<div class="enfeite flutuante_esquerda"></div>
 		<div class="enfeite flutuante_esquerda"></div>
@@ -149,6 +160,7 @@ $(document).ready(function() {
 				
 			</ul>
 		</nav>
+		
 		<div id="center_content">
 			<iframe id="conteudo_principal" name="principal_frame"></iframe>
 		</div>
