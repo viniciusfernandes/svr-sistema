@@ -30,6 +30,17 @@ public class UsuarioInfo {
 		System.out.println("Instanciou usuario info: " + new SimpleDateFormat("HH:mm:sss").format(new Date()));
 	}
 
+	private void clear() {
+		codigoUsuario = null;
+		compraPermitida = false;
+		nomeCompleto = null;
+		nome = null;
+		email = null;
+		vendaPermitida = false;
+		usuarioAutenticado = false;
+		listaTipoAcesso = new ArrayList<>();
+	}
+
 	public Integer getCodigoUsuario() {
 		return codigoUsuario;
 	}
@@ -49,6 +60,7 @@ public class UsuarioInfo {
 	public void inicializar(Usuario usuario) {
 		System.out.println("Inicializando usuario info: " + usuario);
 		if (usuario == null) {
+			clear();
 			return;
 		}
 
