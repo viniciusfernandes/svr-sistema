@@ -20,9 +20,9 @@ $(document).ready(function() {
 	<form action="<c:url value="/login/entrar"/>" method="post">
 			<div class="bloco_autenticacao flutuante_esquerda">
 				<input type="submit" value="" class="botaoLogin" title="Entrar no sistema"/>
-				<input type="password" name="senha" style="width: 8%"/>
+				<input type="password" name="senha" class="uppercaseBloqueado" style="width: 8%"/>
 				<label>Senha:</label>
-				<input type="text" name="email" style="width: 25%"/>
+				<input type="text" name="email" class="uppercaseBloqueado" style="width: 25%"/>
 				<label>Email:</label>
 				<c:choose>
 					<c:when test="${not usuarioInfo.logado}">
